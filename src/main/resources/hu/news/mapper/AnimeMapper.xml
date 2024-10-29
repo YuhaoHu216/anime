@@ -6,12 +6,25 @@
 <mapper namespace="hu.news.mapper.AnimeMapper">
     <select id="search" resultType="hu.news.pojo.Anime">
         select *
-        from 补番目录
+        from unwatched
         <where>
-            <if test="username  != null and username != ''">
+            <if test="name  != null and name != ''">
                 name like concat('%',#{name},'%')
             </if>
-
+            <if test="state != null and state != ''">
+                and state = #{state}
+            </if>
         </where>
     </select>
+
+    <select id="getAllWatched" resultType="hu.news.pojo.AnimeWatched">
+        select * from ${table}
+        <where>
+            <if test="name != null and name != ''">
+                name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+
 </mapper>

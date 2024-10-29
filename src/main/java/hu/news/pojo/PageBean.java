@@ -10,6 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PageBean {
-    private Long toal;
+    private Long total;
     private List rows;
 }
