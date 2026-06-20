@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="top.huyuhao.anime.mapper.AnimeMapper">
+
+    <!-- 搜索已审核通过的动漫 -->
+    <select id="search" resultType="top.huyuhao.anime.pojo.Anime">
+        select distinct a.*
+        from anime a
+        <if test="tagId != null">
+            inner join anime_tag at on a.id = at.anime_id
+        </if>
+        <where>
+            a.review_status = 'approved'
+            <if test="name != null and name != ''">
+                and (a.name_cn like concat('%',#{name},'%')
+                <if test="name != null and name != ''">
+                    or a.name_jp like concat('%',#{name},'%')
+                </if>
+                )
+            </if>
+            <if test="state != null and state != ''">
+                and a.state = #{state}
+            </if>
+            <if test="tagId != null">
+                and at.tag_id = #{tagId}
+            </if>
+        </where>
+        order by a.id desc
+    </select>
+
+    <!-- 搜索待审核的动漫 -->
+    <select id="searchPending" resultType="top.huyuhao.anime.pojo.Anime">
+        select *
+        from anime
+        <where>
+            review_status = 'pending'
+            <if test="name != null and name != ''">
+                and (name_cn like concat('%',#{name},'%') or name_jp like concat('%',#{name},'%'))
+            </if>
+        </where>
+        order by created_at asc
+    </select>
+
+</mapper>

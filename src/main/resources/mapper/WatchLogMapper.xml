@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="top.huyuhao.anime.mapper.WatchLogMapper">
+
+    <!-- 按用户查询观看日志（支持动漫、日期范围筛选） -->
+    <select id="findByUser" resultType="top.huyuhao.anime.pojo.WatchLog">
+        select wl.*, a.name_cn as anime_name_cn, a.cover_url as anime_cover_url
+        from watch_log wl
+        inner join anime a on wl.anime_id = a.id
+        <where>
+            wl.user_id = #{userId}
+            <if test="animeId != null">
+                and wl.anime_id = #{animeId}
+            </if>
+            <if test="startDate != null">
+                and wl.watch_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                and wl.watch_date &lt;= #{endDate}
+            </if>
+        </where>
+        order by wl.watch_date desc, wl.created_at desc
+    </select>
+
+</mapper>
