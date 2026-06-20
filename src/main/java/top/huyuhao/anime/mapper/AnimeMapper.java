@@ -36,10 +36,14 @@ public interface AnimeMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Anime anime);
 
+    @Insert("insert into anime(review_status) values ('preparing')")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    void prepareInsert(Anime anime);
+
     @Update("update anime set name_cn = #{nameCn}, name_jp = #{nameJp}, " +
             "broadcast_time = #{broadcastTime}, bangumi_score = #{bangumiScore}, " +
-            "episode = #{episode}, state = #{state}, cover_url = #{coverUrl}, " +
-            "description = #{description} where id = #{id}")
+            "episode = #{episode}, cover_url = #{coverUrl}, " +
+            "description = #{description}, review_status = #{reviewStatus} where id = #{id}")
     void update(Anime anime);
 
     @Delete("delete from anime where id = #{id}")

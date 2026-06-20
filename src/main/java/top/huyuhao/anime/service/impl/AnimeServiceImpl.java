@@ -48,9 +48,17 @@ public class AnimeServiceImpl implements AnimeService {
 
     @Override
     @Transactional
+    public Integer prepareAnime() {
+        Anime anime = new Anime();
+        animeMapper.prepareInsert(anime);
+        return anime.getId();
+    }
+
+    @Override
+    @Transactional
     public Result addAnime(Anime anime, List<Integer> tagIds) {
         anime.setReviewStatus("approved");
-        animeMapper.insert(anime);
+        animeMapper.update(anime);
         // 关联标签
         if (tagIds != null) {
             for (Integer tagId : tagIds) {
@@ -86,7 +94,7 @@ public class AnimeServiceImpl implements AnimeService {
     public Result submitAnime(Anime anime, List<Integer> tagIds, Integer userId) {
         anime.setReviewStatus("pending");
         anime.setSubmittedBy(userId);
-        animeMapper.insert(anime);
+        animeMapper.update(anime);
         if (tagIds != null) {
             for (Integer tagId : tagIds) {
                 tagMapper.linkTag(anime.getId(), tagId);

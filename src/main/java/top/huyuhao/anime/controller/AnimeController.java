@@ -6,13 +6,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Anime;
 import top.huyuhao.anime.pojo.dto.AnimeAddDTO;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.service.AnimeService;
-import top.huyuhao.anime.service.FileService;
 
 @Slf4j
 @CrossOrigin
@@ -24,8 +22,13 @@ public class AnimeController {
     @Autowired
     private AnimeService animeService;
 
-    @Autowired
-    private FileService fileService;
+    @PostMapping("/prepare")
+    @Operation(summary = "预分配动漫ID", description = "新增动漫前预占一个ID，用于先上传封面再提交数据")
+    public Result prepare() {
+        Integer animeId = animeService.prepareAnime();
+        log.info("预分配动漫ID: {}", animeId);
+        return Result.success(animeId);
+    }
 
     @GetMapping("/search")
     @Operation(summary = "搜索动漫", description = "支持按名称、状态、标签ID分页搜索动漫")
@@ -45,7 +48,7 @@ public class AnimeController {
     }
 
     @PostMapping("/add")
-    @Operation(summary = "添加动漫", description = "添加一部新动漫，可同时上传封面图片和关联标签")
+    @Operation(summary = "添加动漫", description = "添加一部新动漫（封面需先通过 /file/upload 上传）")
     public Result addAnime(@Parameter(description = "动漫信息（JSON）") @RequestBody AnimeAddDTO dto) {
         log.info("添加动漫: {}", dto.getNameCn());
         Anime anime = dto.toAnime();
@@ -53,17 +56,12 @@ public class AnimeController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "修改动漫", description = "根据ID修改动漫信息，可同时更新封面图片和标签")
+    @Operation(summary = "修改动漫", description = "根据ID修改动漫信息（封面需先通过 /file/upload 上传）")
     public Result updateAnime(@Parameter(description = "动漫ID") @PathVariable Integer id,
-                              @Parameter(description = "动漫信息（JSON）") @RequestPart("anime") AnimeAddDTO dto,
-                              @RequestPart(value = "cover", required = false) MultipartFile cover) {
+                              @Parameter(description = "动漫信息（JSON）") @RequestBody AnimeAddDTO dto) {
         log.info("修改动漫: id={}", id);
         Anime anime = dto.toAnime();
         anime.setId(id);
-        if (cover != null && !cover.isEmpty()) {
-            String coverPath = fileService.uploadCover(cover, id);
-            anime.setCoverUrl(coverPath);
-        }
         return animeService.updateAnime(anime, dto.getTagIds());
     }
 
@@ -76,17 +74,10 @@ public class AnimeController {
 
     @PostMapping("/submit")
     @Operation(summary = "用户提交动漫", description = "用户提交一部动漫，需管理员审核后入库。用户身份从 JWT 获取。")
-    public Result submitAnime(@Parameter(description = "动漫信息（JSON）") @RequestPart("anime") AnimeAddDTO dto,
-                              @RequestPart(value = "cover", required = false) MultipartFile cover) {
+    public Result submitAnime(@Parameter(description = "动漫信息（JSON）") @RequestBody AnimeAddDTO dto) {
         Integer userId = UserContext.getUserId();
         log.info("用户提交动漫: {}, userId={}", dto.getNameCn(), userId);
         Anime anime = dto.toAnime();
-        animeService.submitAnime(anime, dto.getTagIds(), userId);
-        if (cover != null && !cover.isEmpty()) {
-            String coverPath = fileService.uploadCover(cover, anime.getId());
-            anime.setCoverUrl(coverPath);
-            animeService.updateAnime(anime, null);
-        }
-        return Result.success("提交成功，等待管理员审核");
+        return animeService.submitAnime(anime, dto.getTagIds(), userId);
     }
 }

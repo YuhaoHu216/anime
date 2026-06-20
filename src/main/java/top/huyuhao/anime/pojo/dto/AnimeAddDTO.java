@@ -8,11 +8,13 @@ import java.util.List;
 
 /**
  * 添加/修改动漫的请求 DTO，封装 anime 字段和 tagIds，避免 Controller 参数过多。
- * 对应 multipart/form-data 中的 "anime" JSON 部分。
  */
 @Data
 @Schema(description = "动漫添加/修改请求体")
 public class AnimeAddDTO {
+
+    @Schema(description = "动漫ID（新增时由 /anime/prepare 预分配；修改时由路径参数覆盖）", example = "123")
+    private Integer id;
 
     @Schema(description = "中文名", example = "进击的巨人")
     private String nameCn;
@@ -39,10 +41,11 @@ public class AnimeAddDTO {
     private List<Integer> tagIds;
 
     /**
-     * 将 DTO 转换为 Anime 实体对象（不包含 id / reviewStatus 等托管字段）
+     * 将 DTO 转换为 Anime 实体对象
      */
     public Anime toAnime() {
         Anime anime = new Anime();
+        anime.setId(this.id);
         anime.setNameCn(this.nameCn);
         anime.setNameJp(this.nameJp);
         anime.setBroadcastTime(this.broadcastTime);

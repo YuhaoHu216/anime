@@ -12,6 +12,11 @@ public interface AnimeService {
 
     Result findById(Integer id);
 
+    /**
+     * 预分配 animeId：插入占位记录并返回自增ID
+     */
+    Integer prepareAnime();
+
     Result addAnime(Anime anime, List<Integer> tagIds);
 
     Result updateAnime(Anime anime, List<Integer> tagIds);

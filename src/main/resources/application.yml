@@ -46,6 +46,7 @@ jwt:
 # 应用自定义配置
 app:
   upload:
-    path: ./uploads
+    path: D:/uploads
     cover-dir: covers
+  base-url: http://localhost:8081/api
 
