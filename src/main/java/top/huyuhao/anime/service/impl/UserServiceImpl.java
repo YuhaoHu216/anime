@@ -8,6 +8,7 @@ import top.huyuhao.anime.mapper.UserMapper;
 import top.huyuhao.anime.pojo.Collection;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.User;
+import top.huyuhao.anime.pojo.dto.UserRegisterDTO;
 import top.huyuhao.anime.service.UserService;
 import top.huyuhao.anime.util.JwtUtil;
 
@@ -26,12 +27,14 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
-    public Result register(User user) {
+    public Result register(UserRegisterDTO dto) {
         // 检查账号是否已存在
-        User existing = userMapper.findByAccount(user.getAccount());
+        User existing = userMapper.findByAccount(dto.getAccount());
         if (existing != null) {
             throw new RuntimeException("账号已存在");
         }
+        // DTO 转实体
+        User user = dto.toUser();
         // BCrypt 加密密码
         user.setPassword(encoder.encode(user.getPassword()));
         userMapper.register(user);

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Anime;
-import top.huyuhao.anime.pojo.AnimeAddDTO;
+import top.huyuhao.anime.pojo.dto.AnimeAddDTO;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.service.AnimeService;
 import top.huyuhao.anime.service.FileService;

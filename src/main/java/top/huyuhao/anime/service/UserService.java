@@ -2,10 +2,11 @@ package top.huyuhao.anime.service;
 
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.User;
+import top.huyuhao.anime.pojo.dto.UserRegisterDTO;
 
 public interface UserService {
 
-    Result register(User user);
+    Result register(UserRegisterDTO dto);
 
     /**
      * 用户登录，返回 JWT token

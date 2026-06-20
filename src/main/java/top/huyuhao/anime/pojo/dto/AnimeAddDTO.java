@@ -1,7 +1,8 @@
-package top.huyuhao.anime.pojo;
+package top.huyuhao.anime.pojo.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import top.huyuhao.anime.pojo.Anime;
 
 import java.util.List;
 

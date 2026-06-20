@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.User;
+import top.huyuhao.anime.pojo.dto.UserRegisterDTO;
 import top.huyuhao.anime.service.UserService;
 
 @Slf4j
@@ -23,10 +24,9 @@ public class UserController {
 
     @PostMapping("/register")
     @Operation(summary = "用户注册")
-    public Result register(@RequestBody User user) {
-        log.info("注册: account={}", user.getAccount());
-            return userService.register(user);
-
+    public Result register(@RequestBody UserRegisterDTO dto) {
+        log.info("注册: account={}", dto.getAccount());
+        return userService.register(dto);
     }
 
     @PostMapping("/login")
