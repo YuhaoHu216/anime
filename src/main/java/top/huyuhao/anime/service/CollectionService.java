@@ -2,26 +2,27 @@ package top.huyuhao.anime.service;
 
 import top.huyuhao.anime.pojo.Collection;
 import top.huyuhao.anime.pojo.CollectionItem;
+import top.huyuhao.anime.pojo.Result;
 
 import java.util.List;
 
 public interface CollectionService {
 
     // 收藏夹 CRUD
-    Collection createCollection(Collection collection);
+    Result createCollection(Collection collection);
 
-    void updateCollection(Collection collection);
+    Result updateCollection(Collection collection);
 
-    void deleteCollection(Integer id);
+    Result deleteCollection(Integer id);
 
     List<Collection> getUserCollections(Integer userId);
 
     // 收藏条目操作
-    void addItem(Integer collectionId, Integer animeId);
+    Result addItem(Integer collectionId, Integer animeId);
 
-    void removeItem(Integer collectionId, Integer animeId);
+    Result removeItem(Integer collectionId, Integer animeId);
 
-    void moveItem(Integer fromCollectionId, Integer toCollectionId, Integer animeId);
+    Result moveItem(Integer fromCollectionId, Integer toCollectionId, Integer animeId);
 
     List<CollectionItem> getItems(Integer collectionId, Integer page, Integer pageSize);
 }

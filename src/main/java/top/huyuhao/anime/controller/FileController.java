@@ -12,10 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import top.huyuhao.anime.service.FileService;
 
-import java.nio.file.Paths;
-
 @RestController
-@RequestMapping("/api/file")
+@RequestMapping("/file")
 @Tag(name = "文件服务", description = "静态文件/图片访问")
 public class FileController {
 
@@ -25,18 +23,14 @@ public class FileController {
     @GetMapping("/{*path}")
     @Operation(summary = "获取文件", description = "根据路径获取上传的文件（封面图片等）")
     public ResponseEntity<Resource> getFile(@Parameter(description = "文件相对路径") @PathVariable String path) {
-        try {
-            String fullPath = fileService.getFullPath(path);
-            Resource resource = new FileSystemResource(fullPath);
-            if (!resource.exists()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
-                    .body(resource);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+        String fullPath = fileService.getFullPath(path);
+        Resource resource = new FileSystemResource(fullPath);
+        if (!resource.exists()) {
+            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                .body(resource);
     }
 }

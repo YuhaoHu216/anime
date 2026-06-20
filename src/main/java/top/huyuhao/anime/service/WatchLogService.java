@@ -1,6 +1,7 @@
 package top.huyuhao.anime.service;
 
 import top.huyuhao.anime.pojo.PageBean;
+import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.WatchLog;
 
 import java.time.LocalDate;
@@ -8,11 +9,11 @@ import java.util.List;
 
 public interface WatchLogService {
 
-    void addLog(WatchLog watchLog);
+    Result addLog(WatchLog watchLog);
 
-    void updateLog(WatchLog watchLog);
+    Result updateLog(WatchLog watchLog);
 
-    void deleteLog(Integer id);
+    Result deleteLog(Integer id);
 
     PageBean<WatchLog> getLogs(Integer page, Integer pageSize, Integer userId,
                                Integer animeId, LocalDate startDate, LocalDate endDate);

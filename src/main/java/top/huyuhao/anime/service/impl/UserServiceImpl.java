@@ -9,6 +9,7 @@ import top.huyuhao.anime.pojo.Collection;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.User;
 import top.huyuhao.anime.pojo.dto.UserRegisterDTO;
+import top.huyuhao.anime.pojo.dto.UserUpdateDTO;
 import top.huyuhao.anime.service.UserService;
 import top.huyuhao.anime.util.JwtUtil;
 
@@ -58,26 +59,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(Integer id) {
+    public Result getCurrentUser(Integer id) {
         User user = userMapper.findById(id);
-        if (user != null) {
-            user.setPassword(null);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
         }
-        return user;
+        user.setPassword(null);
+        return Result.success(user);
     }
 
     @Override
-    public User getCurrentUser(Integer id) {
-        return findById(id);
-    }
-
-    @Override
-    public void updateProfile(User user) {
+    public Result updateProfile(Integer userId, UserUpdateDTO dto) {
+        User user = dto.toUser();
+        user.setId(userId);
         userMapper.updateProfile(user);
+        return Result.success("更新成功");
     }
 
     @Override
-    public void updatePassword(Integer id, String oldPassword, String newPassword) {
+    public Result updatePassword(Integer id, String oldPassword, String newPassword) {
         User user = userMapper.findById(id);
         if (user == null) {
             throw new RuntimeException("用户不存在");
@@ -86,6 +86,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("旧密码错误");
         }
         userMapper.updatePassword(id, encoder.encode(newPassword));
+        return Result.success("密码修改成功");
     }
 
     private void createDefaultCollections(Integer userId) {

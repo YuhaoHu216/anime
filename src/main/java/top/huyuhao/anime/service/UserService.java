@@ -3,6 +3,7 @@ package top.huyuhao.anime.service;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.User;
 import top.huyuhao.anime.pojo.dto.UserRegisterDTO;
+import top.huyuhao.anime.pojo.dto.UserUpdateDTO;
 
 public interface UserService {
 
@@ -13,11 +14,9 @@ public interface UserService {
      */
     Result login(String account, String password);
 
-    User findById(Integer id);
+    Result getCurrentUser(Integer id);
 
-    User getCurrentUser(Integer id);
+    Result updateProfile(Integer userId, UserUpdateDTO dto);
 
-    void updateProfile(User user);
-
-    void updatePassword(Integer id, String oldPassword, String newPassword);
+    Result updatePassword(Integer id, String oldPassword, String newPassword);
 }

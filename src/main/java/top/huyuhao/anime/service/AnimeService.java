@@ -10,13 +10,13 @@ public interface AnimeService {
 
     PageBean<Anime> search(Integer page, Integer pageSize, String name, String state, Integer tagId);
 
-    Anime findById(Integer id);
+    Result findById(Integer id);
 
     Result addAnime(Anime anime, List<Integer> tagIds);
 
-    void updateAnime(Anime anime, List<Integer> tagIds);
+    Result updateAnime(Anime anime, List<Integer> tagIds);
 
-    void deleteAnime(Integer id);
+    Result deleteAnime(Integer id);
 
-    void submitAnime(Anime anime, List<Integer> tagIds, Integer userId);
+    Result submitAnime(Anime anime, List<Integer> tagIds, Integer userId);
 }

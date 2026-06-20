@@ -16,7 +16,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/watch")
+@RequestMapping("/watch")
 @Tag(name = "追番记录", description = "用户追番日志的记录、查询和日历视图")
 public class WatchLogController {
 
@@ -26,14 +26,9 @@ public class WatchLogController {
     @PostMapping("/log")
     @Operation(summary = "添加追番记录", description = "用户身份从 JWT 获取")
     public Result addLog(@RequestBody WatchLog watchLog) {
-        try {
-            // 从 JWT 设置当前用户 ID
-            watchLog.setUserId(UserContext.getUserId());
-            watchLogService.addLog(watchLog);
-            return Result.success("记录成功");
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        // 从 JWT 设置当前用户 ID
+        watchLog.setUserId(UserContext.getUserId());
+        return watchLogService.addLog(watchLog);
     }
 
     @PutMapping("/log/{id}")
@@ -41,23 +36,13 @@ public class WatchLogController {
     public Result updateLog(@Parameter(description = "记录ID") @PathVariable Integer id,
                             @RequestBody WatchLog watchLog) {
         watchLog.setId(id);
-        try {
-            watchLogService.updateLog(watchLog);
-            return Result.success("更新成功");
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        return watchLogService.updateLog(watchLog);
     }
 
     @DeleteMapping("/log/{id}")
     @Operation(summary = "删除追番记录")
     public Result deleteLog(@Parameter(description = "记录ID") @PathVariable Integer id) {
-        try {
-            watchLogService.deleteLog(id);
-            return Result.success("删除成功");
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        return watchLogService.deleteLog(id);
     }
 
     @GetMapping("/logs")

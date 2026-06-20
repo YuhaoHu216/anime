@@ -37,12 +37,13 @@ public class AnimeServiceImpl implements AnimeService {
     }
 
     @Override
-    public Anime findById(Integer id) {
+    public Result findById(Integer id) {
         Anime anime = animeMapper.findById(id);
-        if (anime != null) {
-            anime.setTags(tagMapper.findByAnimeId(id));
+        if (anime == null) {
+            throw new RuntimeException("动漫不存在");
         }
-        return anime;
+        anime.setTags(tagMapper.findByAnimeId(id));
+        return Result.success(anime);
     }
 
     @Override
@@ -61,7 +62,7 @@ public class AnimeServiceImpl implements AnimeService {
 
     @Override
     @Transactional
-    public void updateAnime(Anime anime, List<Integer> tagIds) {
+    public Result updateAnime(Anime anime, List<Integer> tagIds) {
         animeMapper.update(anime);
         if (tagIds != null) {
             tagMapper.unlinkAllTags(anime.getId());
@@ -69,18 +70,20 @@ public class AnimeServiceImpl implements AnimeService {
                 tagMapper.linkTag(anime.getId(), tagId);
             }
         }
+        return Result.success("更新成功");
     }
 
     @Override
     @Transactional
-    public void deleteAnime(Integer id) {
+    public Result deleteAnime(Integer id) {
         tagMapper.unlinkAllTags(id);
         animeMapper.delete(id);
+        return Result.success("删除成功");
     }
 
     @Override
     @Transactional
-    public void submitAnime(Anime anime, List<Integer> tagIds, Integer userId) {
+    public Result submitAnime(Anime anime, List<Integer> tagIds, Integer userId) {
         anime.setReviewStatus("pending");
         anime.setSubmittedBy(userId);
         animeMapper.insert(anime);
@@ -89,5 +92,6 @@ public class AnimeServiceImpl implements AnimeService {
                 tagMapper.linkTag(anime.getId(), tagId);
             }
         }
+        return Result.success("提交成功，等待管理员审核");
     }
 }

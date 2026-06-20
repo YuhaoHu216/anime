@@ -13,7 +13,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/admin")
 @io.swagger.v3.oas.annotations.tags.Tag(name = "管理员", description = "审核管理、标签管理")
 public class AdminController {
 
@@ -33,13 +33,8 @@ public class AdminController {
     public Result review(@Parameter(description = "动漫ID") @PathVariable Integer id,
                          @Parameter(description = "审核状态（approved/rejected）") @RequestParam String reviewStatus,
                          @Parameter(description = "审核备注") @RequestParam(required = false) String reviewComment) {
-        try {
-            Integer adminId = UserContext.getUserId();
-            adminService.reviewAnime(id, reviewStatus, reviewComment, adminId);
-            return Result.success("审核完成");
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        Integer adminId = UserContext.getUserId();
+        return adminService.reviewAnime(id, reviewStatus, reviewComment, adminId);
     }
 
     @GetMapping("/tags")
@@ -52,22 +47,12 @@ public class AdminController {
     @PostMapping("/tags")
     @Operation(summary = "创建标签")
     public Result createTag(@Parameter(description = "标签名称") @RequestParam String name) {
-        try {
-            Tag tag = adminService.createTag(name);
-            return Result.success(tag);
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        return adminService.createTag(name);
     }
 
     @DeleteMapping("/tags/{id}")
     @Operation(summary = "删除标签")
     public Result deleteTag(@Parameter(description = "标签ID") @PathVariable Integer id) {
-        try {
-            adminService.deleteTag(id);
-            return Result.success("删除成功");
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        return adminService.deleteTag(id);
     }
 }

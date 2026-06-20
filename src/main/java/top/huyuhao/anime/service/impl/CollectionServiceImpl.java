@@ -7,6 +7,7 @@ import top.huyuhao.anime.mapper.CollectionItemMapper;
 import top.huyuhao.anime.mapper.CollectionMapper;
 import top.huyuhao.anime.pojo.Collection;
 import top.huyuhao.anime.pojo.CollectionItem;
+import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.service.CollectionService;
 
 import java.util.List;
@@ -21,25 +22,27 @@ public class CollectionServiceImpl implements CollectionService {
     private CollectionItemMapper collectionItemMapper;
 
     @Override
-    public Collection createCollection(Collection collection) {
+    public Result createCollection(Collection collection) {
         collection.setIsDefault(false);
         collectionMapper.insert(collection);
-        return collection;
+        return Result.success(collection);
     }
 
     @Override
-    public void updateCollection(Collection collection) {
+    public Result updateCollection(Collection collection) {
         collectionMapper.update(collection);
+        return Result.success("更新成功");
     }
 
     @Override
     @Transactional
-    public void deleteCollection(Integer id) {
+    public Result deleteCollection(Integer id) {
         Collection c = collectionMapper.findById(id);
         if (c != null && c.getIsDefault()) {
             throw new RuntimeException("默认收藏夹不可删除");
         }
         collectionMapper.delete(id);
+        return Result.success("删除成功");
     }
 
     @Override
@@ -52,7 +55,7 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public void addItem(Integer collectionId, Integer animeId) {
+    public Result addItem(Integer collectionId, Integer animeId) {
         CollectionItem existing = collectionItemMapper.findByCollectionAndAnime(collectionId, animeId);
         if (existing != null) {
             throw new RuntimeException("该动漫已在此收藏夹中");
@@ -61,15 +64,17 @@ public class CollectionServiceImpl implements CollectionService {
         item.setCollectionId(collectionId);
         item.setAnimeId(animeId);
         collectionItemMapper.insert(item);
+        return Result.success("添加成功");
     }
 
     @Override
-    public void removeItem(Integer collectionId, Integer animeId) {
+    public Result removeItem(Integer collectionId, Integer animeId) {
         collectionItemMapper.deleteByCollectionAndAnime(collectionId, animeId);
+        return Result.success("移除成功");
     }
 
     @Override
-    public void moveItem(Integer fromCollectionId, Integer toCollectionId, Integer animeId) {
+    public Result moveItem(Integer fromCollectionId, Integer toCollectionId, Integer animeId) {
         // 先检查目标收藏夹是否已有
         CollectionItem existing = collectionItemMapper.findByCollectionAndAnime(toCollectionId, animeId);
         if (existing != null) {
@@ -78,6 +83,7 @@ public class CollectionServiceImpl implements CollectionService {
         } else {
             collectionItemMapper.moveAnime(fromCollectionId, toCollectionId, animeId);
         }
+        return Result.success("移动成功");
     }
 
     @Override

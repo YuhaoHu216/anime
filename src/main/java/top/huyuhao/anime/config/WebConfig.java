@@ -22,8 +22,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 // 白名单：登录、注册、健康检查、Swagger/Knife4j 文档
                 .excludePathPatterns(
-                        "/api/user/login",
-                        "/api/user/register",
+                        "/user/login",
+                        "/user/register",
                         "/health",
                         "/error",
                         // Swagger / Knife4j

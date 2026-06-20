@@ -8,6 +8,7 @@ import top.huyuhao.anime.mapper.AnimeMapper;
 import top.huyuhao.anime.mapper.TagMapper;
 import top.huyuhao.anime.pojo.Anime;
 import top.huyuhao.anime.pojo.PageBean;
+import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.Tag;
 import top.huyuhao.anime.service.AdminService;
 
@@ -31,21 +32,23 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void reviewAnime(Integer animeId, String reviewStatus, String reviewComment, Integer adminId) {
+    public Result reviewAnime(Integer animeId, String reviewStatus, String reviewComment, Integer adminId) {
         animeMapper.review(animeId, reviewStatus, adminId, reviewComment);
+        return Result.success("审核完成");
     }
 
     @Override
-    public Tag createTag(String name) {
+    public Result createTag(String name) {
         Tag tag = new Tag();
         tag.setName(name);
         tagMapper.insert(tag);
-        return tag;
+        return Result.success(tag);
     }
 
     @Override
-    public void deleteTag(Integer id) {
+    public Result deleteTag(Integer id) {
         tagMapper.delete(id);
+        return Result.success("删除成功");
     }
 
     @Override

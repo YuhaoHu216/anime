@@ -14,7 +14,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/collection")
+@RequestMapping("/collection")
 @Tag(name = "收藏夹管理", description = "用户收藏夹的创建、编辑和内容管理")
 public class CollectionController {
 
@@ -32,14 +32,9 @@ public class CollectionController {
     @PostMapping("/create")
     @Operation(summary = "创建收藏夹", description = "用户身份从 JWT 获取")
     public Result create(@RequestBody Collection collection) {
-        try {
-            // 从 JWT 设置当前用户 ID，防止越权创建
-            collection.setUserId(UserContext.getUserId());
-            Collection created = collectionService.createCollection(collection);
-            return Result.success(created);
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        // 从 JWT 设置当前用户 ID，防止越权创建
+        collection.setUserId(UserContext.getUserId());
+        return collectionService.createCollection(collection);
     }
 
     @PutMapping("/{id}")
@@ -47,23 +42,13 @@ public class CollectionController {
     public Result update(@Parameter(description = "收藏夹ID") @PathVariable Integer id,
                          @RequestBody Collection collection) {
         collection.setId(id);
-        try {
-            collectionService.updateCollection(collection);
-            return Result.success("更新成功");
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        return collectionService.updateCollection(collection);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "删除收藏夹")
     public Result delete(@Parameter(description = "收藏夹ID") @PathVariable Integer id) {
-        try {
-            collectionService.deleteCollection(id);
-            return Result.success("删除成功");
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        return collectionService.deleteCollection(id);
     }
 
     @GetMapping("/{id}/items")
@@ -78,24 +63,14 @@ public class CollectionController {
     @Operation(summary = "向收藏夹添加动漫")
     public Result addItem(@Parameter(description = "收藏夹ID") @PathVariable Integer id,
                           @Parameter(description = "动漫ID") @RequestParam Integer animeId) {
-        try {
-            collectionService.addItem(id, animeId);
-            return Result.success("添加成功");
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        return collectionService.addItem(id, animeId);
     }
 
     @DeleteMapping("/{id}/remove/{animeId}")
     @Operation(summary = "从收藏夹移除动漫")
     public Result removeItem(@Parameter(description = "收藏夹ID") @PathVariable Integer id,
                              @Parameter(description = "动漫ID") @PathVariable Integer animeId) {
-        try {
-            collectionService.removeItem(id, animeId);
-            return Result.success("移除成功");
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        return collectionService.removeItem(id, animeId);
     }
 
     @PutMapping("/move/{animeId}")
@@ -103,11 +78,6 @@ public class CollectionController {
     public Result moveItem(@Parameter(description = "源收藏夹ID") @RequestParam Integer fromCollectionId,
                            @Parameter(description = "目标收藏夹ID") @RequestParam Integer toCollectionId,
                            @Parameter(description = "动漫ID") @PathVariable Integer animeId) {
-        try {
-            collectionService.moveItem(fromCollectionId, toCollectionId, animeId);
-            return Result.success("移动成功");
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        return collectionService.moveItem(fromCollectionId, toCollectionId, animeId);
     }
 }

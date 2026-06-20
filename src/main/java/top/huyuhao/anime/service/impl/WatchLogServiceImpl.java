@@ -11,6 +11,7 @@ import top.huyuhao.anime.mapper.WatchLogMapper;
 import top.huyuhao.anime.pojo.Collection;
 import top.huyuhao.anime.pojo.CollectionItem;
 import top.huyuhao.anime.pojo.PageBean;
+import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.WatchLog;
 import top.huyuhao.anime.service.WatchLogService;
 
@@ -31,23 +32,26 @@ public class WatchLogServiceImpl implements WatchLogService {
 
     @Override
     @Transactional
-    public void addLog(WatchLog watchLog) {
+    public Result addLog(WatchLog watchLog) {
         if (watchLog.getEpCount() == null) {
             watchLog.setEpCount(1);
         }
         watchLogMapper.insert(watchLog);
         // 记录观看后，自动将动漫加入"看过"默认收藏夹
         addToDefaultCollection(watchLog.getUserId(), watchLog.getAnimeId(), "看过");
+        return Result.success("记录成功");
     }
 
     @Override
-    public void updateLog(WatchLog watchLog) {
+    public Result updateLog(WatchLog watchLog) {
         watchLogMapper.update(watchLog);
+        return Result.success("更新成功");
     }
 
     @Override
-    public void deleteLog(Integer id) {
+    public Result deleteLog(Integer id) {
         watchLogMapper.delete(id);
+        return Result.success("删除成功");
     }
 
     @Override

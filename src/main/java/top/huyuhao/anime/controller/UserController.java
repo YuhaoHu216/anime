@@ -8,14 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Result;
-import top.huyuhao.anime.pojo.User;
 import top.huyuhao.anime.pojo.dto.UserRegisterDTO;
+import top.huyuhao.anime.pojo.dto.UserUpdateDTO;
 import top.huyuhao.anime.service.UserService;
 
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 @Tag(name = "用户管理", description = "用户注册、登录、个人信息管理")
 public class UserController {
 
@@ -45,53 +45,27 @@ public class UserController {
         if (userId == null) {
             return Result.error("未登录");
         }
-        User user = userService.getCurrentUser(userId);
-        if (user == null) {
-            return Result.error("用户不存在");
-        }
-        return Result.success(user);
-    }
-
-    @GetMapping("/profile")
-    @Operation(summary = "获取用户信息（兼容旧接口）", description = "支持显式传 id 或从 JWT 获取")
-    public Result profile(@Parameter(description = "用户ID（可选，不传则从 JWT 获取）") @RequestParam(required = false) Integer id) {
-        Integer userId = id != null ? id : UserContext.getUserId();
-        if (userId == null) {
-            return Result.error("未登录");
-        }
-        User user = userService.findById(userId);
-        if (user == null) {
-            return Result.error("用户不存在");
-        }
-        return Result.success(user);
+        return userService.getCurrentUser(userId);
     }
 
     @PutMapping("/profile")
     @Operation(summary = "更新个人信息", description = "从 JWT 获取用户身份，无需显式传递 id")
-    public Result updateProfile(@RequestBody User user) {
-        try {
-            // 从 JWT 获取当前用户 ID，防止越权修改他人信息
-            user.setId(UserContext.getUserId());
-            userService.updateProfile(user);
-            return Result.success("更新成功");
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
+    public Result updateProfile(@RequestBody UserUpdateDTO dto) {
+        Integer userId = UserContext.getUserId();
+        if (userId == null) {
+            return Result.error("未登录");
         }
+        return userService.updateProfile(userId, dto);
     }
 
     @PutMapping("/password")
     @Operation(summary = "修改密码", description = "从 JWT 获取用户身份，无需显式传递 userId")
     public Result updatePassword(@Parameter(description = "旧密码") @RequestParam String oldPassword,
                                   @Parameter(description = "新密码") @RequestParam String newPassword) {
-        try {
-            Integer userId = UserContext.getUserId();
-            if (userId == null) {
-                return Result.error("未登录");
-            }
-            userService.updatePassword(userId, oldPassword, newPassword);
-            return Result.success("密码修改成功");
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
+        Integer userId = UserContext.getUserId();
+        if (userId == null) {
+            return Result.error("未登录");
         }
+        return userService.updatePassword(userId, oldPassword, newPassword);
     }
 }
