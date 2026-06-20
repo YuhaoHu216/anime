@@ -1,4 +1,4 @@
-package hu.news.pojo;
+package top.huyuhao.anime.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

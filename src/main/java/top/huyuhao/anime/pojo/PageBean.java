@@ -1,4 +1,4 @@
-package hu.news.pojo;
+package top.huyuhao.anime.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PageBean {
+public class PageBean<T> {
     private Long total;
-    private List rows;
+    private List<T> rows;
 }
