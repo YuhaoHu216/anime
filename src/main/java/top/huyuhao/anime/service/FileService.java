@@ -5,15 +5,10 @@ import org.springframework.web.multipart.MultipartFile;
 public interface FileService {
 
     /**
-     * 上传封面图
-     * @param file 图片文件
+     * 上传文件（通用）
+     * @param file 文件
      * @param animeId 动漫ID（用于命名）
-     * @return 相对路径 covers/{animeId}_{UUID}.ext
+     * @return 完整可访问URL，如 http://localhost:8081/api/file/covers/123_abc.png
      */
-    String uploadCover(MultipartFile file, Integer animeId);
-
-    /**
-     * 根据相对路径获取文件的完整本地路径
-     */
-    String getFullPath(String relativePath);
+    String upload(MultipartFile file, Integer animeId);
 }
