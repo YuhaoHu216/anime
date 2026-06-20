@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.Tag;
 import top.huyuhao.anime.service.AdminService;
@@ -28,12 +29,12 @@ public class AdminController {
     }
 
     @PostMapping("/review/{id}")
-    @Operation(summary = "审核动漫", description = "对用户提交的动漫进行审核，通过或驳回")
+    @Operation(summary = "审核动漫", description = "对用户提交的动漫进行审核，通过或驳回。管理员身份从 JWT 获取。")
     public Result review(@Parameter(description = "动漫ID") @PathVariable Integer id,
                          @Parameter(description = "审核状态（approved/rejected）") @RequestParam String reviewStatus,
-                         @Parameter(description = "审核备注") @RequestParam(required = false) String reviewComment,
-                         @Parameter(description = "管理员ID") @RequestParam Integer adminId) {
+                         @Parameter(description = "审核备注") @RequestParam(required = false) String reviewComment) {
         try {
+            Integer adminId = UserContext.getUserId();
             adminService.reviewAnime(id, reviewStatus, reviewComment, adminId);
             return Result.success("审核完成");
         } catch (Exception e) {

@@ -38,6 +38,11 @@ knife4j:
   setting:
     language: zh_cn
 
+# JWT 配置
+jwt:
+  secret: animeBackendSecretKeyForJwtToken2026!@#
+  expiration: 31536000  # token 过期时间（秒），365 天
+
 # 应用自定义配置
 app:
   upload:

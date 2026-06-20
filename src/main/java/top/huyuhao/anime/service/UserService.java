@@ -1,14 +1,20 @@
 package top.huyuhao.anime.service;
 
+import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.User;
 
 public interface UserService {
 
-    void register(User user);
+    Result register(User user);
 
-    User login(String account, String password);
+    /**
+     * 用户登录，返回 JWT token
+     */
+    Result login(String account, String password);
 
     User findById(Integer id);
+
+    User getCurrentUser(Integer id);
 
     void updateProfile(User user);
 

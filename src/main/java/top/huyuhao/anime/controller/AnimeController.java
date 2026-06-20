@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Anime;
 import top.huyuhao.anime.pojo.AnimeAddDTO;
 import top.huyuhao.anime.pojo.Result;
@@ -88,10 +89,10 @@ public class AnimeController {
     }
 
     @PostMapping("/submit")
-    @Operation(summary = "用户提交动漫", description = "用户提交一部动漫，需管理员审核后入库")
+    @Operation(summary = "用户提交动漫", description = "用户提交一部动漫，需管理员审核后入库。用户身份从 JWT 获取。")
     public Result submitAnime(@Parameter(description = "动漫信息（JSON）") @RequestPart("anime") AnimeAddDTO dto,
-                              @RequestPart(value = "cover", required = false) MultipartFile cover,
-                              @RequestParam Integer userId) {
+                              @RequestPart(value = "cover", required = false) MultipartFile cover) {
+        Integer userId = UserContext.getUserId();
         log.info("用户提交动漫: {}, userId={}", dto.getNameCn(), userId);
         try {
             Anime anime = dto.toAnime();

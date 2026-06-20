@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.WatchLog;
 import top.huyuhao.anime.service.WatchLogService;
@@ -23,9 +24,11 @@ public class WatchLogController {
     private WatchLogService watchLogService;
 
     @PostMapping("/log")
-    @Operation(summary = "添加追番记录")
+    @Operation(summary = "添加追番记录", description = "用户身份从 JWT 获取")
     public Result addLog(@RequestBody WatchLog watchLog) {
         try {
+            // 从 JWT 设置当前用户 ID
+            watchLog.setUserId(UserContext.getUserId());
             watchLogService.addLog(watchLog);
             return Result.success("记录成功");
         } catch (Exception e) {
@@ -58,29 +61,29 @@ public class WatchLogController {
     }
 
     @GetMapping("/logs")
-    @Operation(summary = "分页查询追番记录", description = "支持按用户、动漫、日期范围筛选")
+    @Operation(summary = "分页查询追番记录", description = "用户身份从 JWT 获取，支持按动漫、日期范围筛选")
     public Result getLogs(@Parameter(description = "页码") @RequestParam(defaultValue = "1") Integer page,
                           @Parameter(description = "每页条数") @RequestParam(defaultValue = "20") Integer pageSize,
-                          @Parameter(description = "用户ID") @RequestParam Integer userId,
                           @Parameter(description = "动漫ID（可选）") @RequestParam(required = false) Integer animeId,
                           @Parameter(description = "开始日期（yyyy-MM-dd）") @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
                           @Parameter(description = "结束日期（yyyy-MM-dd）") @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
+        Integer userId = UserContext.getUserId();
         return Result.success(watchLogService.getLogs(page, pageSize, userId, animeId, startDate, endDate));
     }
 
     @GetMapping("/logs/date")
-    @Operation(summary = "按日期查询追番记录")
-    public Result getLogsByDate(@Parameter(description = "用户ID") @RequestParam Integer userId,
-                                 @Parameter(description = "日期（yyyy-MM-dd）") @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    @Operation(summary = "按日期查询追番记录", description = "用户身份从 JWT 获取")
+    public Result getLogsByDate(@Parameter(description = "日期（yyyy-MM-dd）") @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        Integer userId = UserContext.getUserId();
         List<WatchLog> logs = watchLogService.getLogsByDate(userId, date);
         return Result.success(logs);
     }
 
     @GetMapping("/calendar")
-    @Operation(summary = "获取追番日历", description = "获取指定月份中用户追番的日期列表")
-    public Result getCalendar(@Parameter(description = "用户ID") @RequestParam Integer userId,
-                               @Parameter(description = "年份") @RequestParam Integer year,
+    @Operation(summary = "获取追番日历", description = "用户身份从 JWT 获取，获取指定月份中用户追番的日期列表")
+    public Result getCalendar(@Parameter(description = "年份") @RequestParam Integer year,
                                @Parameter(description = "月份") @RequestParam Integer month) {
+        Integer userId = UserContext.getUserId();
         List<LocalDate> dates = watchLogService.getCalendar(userId, year, month);
         return Result.success(dates);
     }

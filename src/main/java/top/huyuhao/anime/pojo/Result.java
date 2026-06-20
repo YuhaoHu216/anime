@@ -23,6 +23,10 @@ public class Result {
         return new Result(1,"success", data);
     }
 
+    public static Result success(String msg, Object data) {
+        return new Result(1,msg, data);
+    }
+
     public static Result error(String msg) {
         return new Result(0,msg, null);
     }

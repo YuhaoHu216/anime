@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Collection;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.service.CollectionService;
@@ -21,16 +22,19 @@ public class CollectionController {
     private CollectionService collectionService;
 
     @GetMapping("/list")
-    @Operation(summary = "获取用户收藏夹列表")
-    public Result list(@Parameter(description = "用户ID") @RequestParam Integer userId) {
+    @Operation(summary = "获取当前用户的收藏夹列表", description = "用户身份从 JWT 获取")
+    public Result list() {
+        Integer userId = UserContext.getUserId();
         List<Collection> collections = collectionService.getUserCollections(userId);
         return Result.success(collections);
     }
 
     @PostMapping("/create")
-    @Operation(summary = "创建收藏夹")
+    @Operation(summary = "创建收藏夹", description = "用户身份从 JWT 获取")
     public Result create(@RequestBody Collection collection) {
         try {
+            // 从 JWT 设置当前用户 ID，防止越权创建
+            collection.setUserId(UserContext.getUserId());
             Collection created = collectionService.createCollection(collection);
             return Result.success(created);
         } catch (Exception e) {

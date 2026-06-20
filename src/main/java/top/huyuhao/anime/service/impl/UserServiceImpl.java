@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import top.huyuhao.anime.mapper.CollectionMapper;
 import top.huyuhao.anime.mapper.UserMapper;
 import top.huyuhao.anime.pojo.Collection;
+import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.User;
 import top.huyuhao.anime.service.UserService;
+import top.huyuhao.anime.util.JwtUtil;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,10 +20,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private CollectionMapper collectionMapper;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
-    public void register(User user) {
+    public Result register(User user) {
         // 检查账号是否已存在
         User existing = userMapper.findByAccount(user.getAccount());
         if (existing != null) {
@@ -32,10 +37,11 @@ public class UserServiceImpl implements UserService {
         userMapper.register(user);
         // 为用户创建 5 个默认收藏夹
         createDefaultCollections(user.getId());
+        return Result.success("注册成功");
     }
 
     @Override
-    public User login(String account, String password) {
+    public Result login(String account, String password) {
         User user = userMapper.findByAccount(account);
         if (user == null) {
             throw new RuntimeException("账号不存在");
@@ -43,9 +49,9 @@ public class UserServiceImpl implements UserService {
         if (!encoder.matches(password, user.getPassword())) {
             throw new RuntimeException("密码错误");
         }
-        // 不返回密码
-        user.setPassword(null);
-        return user;
+        // 生成并返回 JWT token
+        String token =  jwtUtil.generateToken(user.getId(), user.getUsername());
+        return Result.success("success",token);
     }
 
     @Override
@@ -55,6 +61,11 @@ public class UserServiceImpl implements UserService {
             user.setPassword(null);
         }
         return user;
+    }
+
+    @Override
+    public User getCurrentUser(Integer id) {
+        return findById(id);
     }
 
     @Override
