@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.WatchLog;
+import top.huyuhao.anime.pojo.dto.WatchLogAddDTO;
+import top.huyuhao.anime.pojo.dto.WatchLogUpdateDTO;
 import top.huyuhao.anime.service.WatchLogService;
 
 import java.time.LocalDate;
@@ -25,7 +27,8 @@ public class WatchLogController {
 
     @PostMapping("/log")
     @Operation(summary = "添加追番记录", description = "用户身份从 JWT 获取")
-    public Result addLog(@RequestBody WatchLog watchLog) {
+    public Result addLog(@RequestBody WatchLogAddDTO dto) {
+        WatchLog watchLog = dto.toWatchLog();
         // 从 JWT 设置当前用户 ID
         watchLog.setUserId(UserContext.getUserId());
         return watchLogService.addLog(watchLog);
@@ -34,7 +37,8 @@ public class WatchLogController {
     @PutMapping("/log/{id}")
     @Operation(summary = "更新追番记录")
     public Result updateLog(@Parameter(description = "记录ID") @PathVariable Integer id,
-                            @RequestBody WatchLog watchLog) {
+                            @RequestBody WatchLogUpdateDTO dto) {
+        WatchLog watchLog = dto.toWatchLog();
         watchLog.setId(id);
         return watchLogService.updateLog(watchLog);
     }
@@ -72,4 +76,6 @@ public class WatchLogController {
         List<LocalDate> dates = watchLogService.getCalendar(userId, year, month);
         return Result.success(dates);
     }
+
+    // todo 后续添加按月份，按年的数据统计
 }
