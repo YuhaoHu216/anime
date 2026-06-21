@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Collection;
 import top.huyuhao.anime.pojo.Result;
+import top.huyuhao.anime.pojo.dto.CollectionCreateDTO;
+import top.huyuhao.anime.pojo.dto.CollectionUpdateDTO;
 import top.huyuhao.anime.service.CollectionService;
 
 import java.util.List;
@@ -31,17 +33,17 @@ public class CollectionController {
 
     @PostMapping("/create")
     @Operation(summary = "创建收藏夹", description = "用户身份从 JWT 获取")
-    public Result create(@RequestBody Collection collection) {
+    public Result create(@RequestBody CollectionCreateDTO dto) {
+        Collection collection = dto.toCollection();
         // 从 JWT 设置当前用户 ID，防止越权创建
         collection.setUserId(UserContext.getUserId());
         return collectionService.createCollection(collection);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update")
     @Operation(summary = "编辑收藏夹")
-    public Result update(@Parameter(description = "收藏夹ID") @PathVariable Integer id,
-                         @RequestBody Collection collection) {
-        collection.setId(id);
+    public Result update(@RequestBody CollectionUpdateDTO dto) {
+        Collection collection = dto.toCollection();
         return collectionService.updateCollection(collection);
     }
 

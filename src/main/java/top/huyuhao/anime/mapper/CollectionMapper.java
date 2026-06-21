@@ -14,7 +14,7 @@ public interface CollectionMapper {
     void insert(Collection collection);
 
     @Update("update collection set name = #{name}, description = #{description}, " +
-            "is_public = #{isPublic} where id = #{id}")
+            "is_public = #{isPublic},sort_order = #{sortOrder} where id = #{id}")
     void update(Collection collection);
 
     @Delete("delete from collection where id = #{id}")

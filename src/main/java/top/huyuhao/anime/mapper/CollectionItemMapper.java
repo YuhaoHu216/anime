@@ -27,7 +27,7 @@ public interface CollectionItemMapper {
                    @Param("animeId") Integer animeId);
 
     @Select("select ci.*, a.name_cn as anime_name_cn, a.cover_url as anime_cover_url, " +
-            "a.state as anime_state, a.episode as anime_episode " +
+            "a.episode as anime_episode " +
             "from collection_item ci inner join anime a on ci.anime_id = a.id " +
             "where ci.collection_id = #{collectionId} order by ci.added_at desc")
     @Results({
@@ -36,7 +36,6 @@ public interface CollectionItemMapper {
             @Result(property = "addedAt", column = "added_at"),
             @Result(property = "animeNameCn", column = "anime_name_cn"),
             @Result(property = "animeCoverUrl", column = "anime_cover_url"),
-            @Result(property = "animeState", column = "anime_state"),
             @Result(property = "animeEpisode", column = "anime_episode")
     })
     List<CollectionItem> findByCollectionId(Integer collectionId);

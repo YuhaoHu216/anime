@@ -25,7 +25,7 @@ public class CollectionServiceImpl implements CollectionService {
     public Result createCollection(Collection collection) {
         collection.setIsDefault(false);
         collectionMapper.insert(collection);
-        return Result.success(collection);
+        return Result.success("创建成功");
     }
 
     @Override
