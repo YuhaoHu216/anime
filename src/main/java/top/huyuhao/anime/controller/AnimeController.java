@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Anime;
 import top.huyuhao.anime.pojo.dto.AnimeAddDTO;
+import top.huyuhao.anime.pojo.dto.AnimeUpdateDTO;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.service.AnimeService;
 
@@ -55,13 +56,11 @@ public class AnimeController {
         return animeService.addAnime(anime, dto.getTagIds());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update")
     @Operation(summary = "修改动漫", description = "根据ID修改动漫信息（封面需先通过 /file/upload 上传）")
-    public Result updateAnime(@Parameter(description = "动漫ID") @PathVariable Integer id,
-                              @Parameter(description = "动漫信息（JSON）") @RequestBody AnimeAddDTO dto) {
-        log.info("修改动漫: id={}", id);
+    public Result updateAnime(@Parameter(description = "动漫信息（JSON）") @RequestBody AnimeUpdateDTO dto) {
+        log.info("修改动漫: id={}", dto.getId());
         Anime anime = dto.toAnime();
-        anime.setId(id);
         return animeService.updateAnime(anime, dto.getTagIds());
     }
 
