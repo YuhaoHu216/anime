@@ -34,6 +34,9 @@ public class AnimeUpdateDTO {
     @Schema(description = "封面图片 URL（一般由文件上传后回填）")
     private String coverUrl;
 
+    @Schema(description = "官方网址", example = "https://shingeki.tv/")
+    private String officialWebsite;
+
     @Schema(description = "动漫简介")
     private String description;
 
@@ -52,6 +55,7 @@ public class AnimeUpdateDTO {
         anime.setBangumiScore(this.bangumiScore);
         anime.setEpisode(this.episode);
         anime.setCoverUrl(this.coverUrl);
+        anime.setOfficialWebsite(this.officialWebsite);
         anime.setDescription(this.description);
         return anime;
     }

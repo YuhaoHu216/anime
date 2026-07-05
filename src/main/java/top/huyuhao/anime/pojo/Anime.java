@@ -18,6 +18,7 @@ public class Anime {
     private String bangumiScore;
     private Integer episode;
     private String coverUrl;
+    private String officialWebsite;
     private String description;
     // 审核相关
     private String reviewStatus;

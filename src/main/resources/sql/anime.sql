@@ -38,6 +38,7 @@ CREATE TABLE anime (
   bangumi_score VARCHAR(10) COMMENT 'Bangumi评分',
   episode INT DEFAULT 0 COMMENT '总集数',
   cover_url VARCHAR(500) COMMENT '封面图本地路径 covers/{animeId}_{UUID}.jpg',
+  official_website VARCHAR(500) COMMENT '官方网址',
   description TEXT COMMENT '简介',
   review_status VARCHAR(20) DEFAULT 'approved' COMMENT 'pending/approved/rejected',
   submitted_by INT COMMENT '提交者用户ID',

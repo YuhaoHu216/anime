@@ -20,6 +20,7 @@ public interface AnimeMapper {
             @Result(property = "broadcastTime", column = "broadcast_time"),
             @Result(property = "bangumiScore", column = "bangumi_score"),
             @Result(property = "coverUrl", column = "cover_url"),
+            @Result(property = "officialWebsite", column = "official_website"),
             @Result(property = "reviewStatus", column = "review_status"),
             @Result(property = "submittedBy", column = "submitted_by"),
             @Result(property = "reviewedBy", column = "reviewed_by"),
@@ -30,9 +31,9 @@ public interface AnimeMapper {
     Anime findById(Integer id);
 
     @Insert("insert into anime(name_cn, name_jp, broadcast_time, bangumi_score, episode, " +
-            "cover_url, description, review_status, submitted_by) " +
+            "cover_url, official_website, description, review_status, submitted_by) " +
             "values (#{nameCn}, #{nameJp}, #{broadcastTime}, #{bangumiScore}, #{episode}, " +
-            "#{coverUrl}, #{description}, #{reviewStatus}, #{submittedBy})")
+            "#{coverUrl}, #{officialWebsite}, #{description}, #{reviewStatus}, #{submittedBy})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Anime anime);
 
@@ -43,6 +44,7 @@ public interface AnimeMapper {
     @Update("update anime set name_cn = #{nameCn}, name_jp = #{nameJp}, " +
             "broadcast_time = #{broadcastTime}, bangumi_score = #{bangumiScore}, " +
             "episode = #{episode}, cover_url = #{coverUrl}, " +
+            "official_website = #{officialWebsite}, " +
             "description = #{description}, review_status = #{reviewStatus} where id = #{id}")
     void update(Anime anime);
 
