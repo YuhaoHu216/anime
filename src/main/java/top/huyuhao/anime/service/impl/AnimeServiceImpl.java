@@ -25,9 +25,9 @@ public class AnimeServiceImpl implements AnimeService {
     private TagMapper tagMapper;
 
     @Override
-    public PageBean<Anime> search(Integer page, Integer pageSize, String name, String state, Integer tagId) {
+    public PageBean<Anime> search(Integer page, Integer pageSize, String name, Integer tagId) {
         PageHelper.startPage(page, pageSize);
-        List<Anime> animeList = animeMapper.search(name, state, tagId);
+        List<Anime> animeList = animeMapper.search(name, tagId);
         // 为每个动漫加载标签
         for (Anime anime : animeList) {
             anime.setTags(tagMapper.findByAnimeId(anime.getId()));

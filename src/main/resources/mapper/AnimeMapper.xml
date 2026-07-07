@@ -21,9 +21,6 @@
                 </if>
                 )
             </if>
-            <if test="state != null and state != ''">
-                and a.state = #{state}
-            </if>
             <if test="tagId != null">
                 and at.tag_id = #{tagId}
             </if>

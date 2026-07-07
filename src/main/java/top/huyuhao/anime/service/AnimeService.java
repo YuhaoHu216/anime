@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AnimeService {
 
-    PageBean<Anime> search(Integer page, Integer pageSize, String name, String state, Integer tagId);
+    PageBean<Anime> search(Integer page, Integer pageSize, String name, Integer tagId);
 
     Result findById(Integer id);
 

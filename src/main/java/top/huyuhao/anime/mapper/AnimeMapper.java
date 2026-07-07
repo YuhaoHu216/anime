@@ -10,7 +10,6 @@ public interface AnimeMapper {
 
     // 搜索已审核通过的动漫（分页由 PageHelper 处理）
     List<Anime> search(@Param("name") String name,
-                       @Param("state") String state,
                        @Param("tagId") Integer tagId);
 
     @Select("select * from anime where id = #{id}")
