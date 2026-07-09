@@ -2,6 +2,8 @@ package top.huyuhao.anime.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -14,6 +16,8 @@ import top.huyuhao.anime.util.JwtUtil;
  */
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtInterceptor.class);
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -34,12 +38,16 @@ public class JwtInterceptor implements HandlerInterceptor {
 
         if (token != null && !token.isBlank() && jwtUtil.validateToken(token)) {
             // 验证通过，将用户信息存入 ThreadLocal
-            UserContext.setUserId(jwtUtil.getUserIdFromToken(token));
-            UserContext.setUsername(jwtUtil.getUsernameFromToken(token));
+            Integer userId = jwtUtil.getUserIdFromToken(token);
+            String username = jwtUtil.getUsernameFromToken(token);
+            log.info("JWT 验证通过 — 请求路径: {}, userId: {}, username: {}", request.getRequestURI(), userId, username);
+            UserContext.setUserId(userId);
+            UserContext.setUsername(username);
             return true;
         }
 
         // 验证失败，返回 401
+        log.warn("JWT 验证失败 — 请求路径: {}, token是否存在: {}", request.getRequestURI(), token != null && !token.isBlank());
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write("{\"code\":0,\"msg\":\"未登录或登录已过期\"}");

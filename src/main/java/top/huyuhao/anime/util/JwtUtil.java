@@ -75,9 +75,11 @@ public class JwtUtil {
     public Integer getUserIdFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
         Object rawUserId = claims.get("userId");
+        log.info("从 token 解析 userId — rawUserId: {}, 类型: {}", rawUserId, rawUserId != null ? rawUserId.getClass().getName() : "null");
         if (rawUserId instanceof Number) {
             return ((Number) rawUserId).intValue();
         }
+        log.warn("userId 类型不是 Number! 实际类型: {}", rawUserId != null ? rawUserId.getClass().getName() : "null");
         return null;
     }
 

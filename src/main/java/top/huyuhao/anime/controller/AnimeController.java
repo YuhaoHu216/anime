@@ -41,7 +41,7 @@ public class AnimeController {
         return Result.success(animeService.search(page, pageSize, name, tagId));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/info/{id}")
     @Operation(summary = "根据ID获取动漫详情")
     public Result getById(@Parameter(description = "动漫ID") @PathVariable Integer id) {
         return animeService.findById(id);
@@ -52,6 +52,7 @@ public class AnimeController {
     public Result addAnime(@Parameter(description = "动漫信息（JSON）") @RequestBody AnimeAddDTO dto) {
         log.info("添加动漫: {}", dto.getNameCn());
         Anime anime = dto.toAnime();
+        anime.setSubmittedBy(UserContext.getUserId());
         return animeService.addAnime(anime, dto.getTagIds());
     }
 
