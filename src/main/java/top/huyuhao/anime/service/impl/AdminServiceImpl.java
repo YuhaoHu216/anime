@@ -24,9 +24,9 @@ public class AdminServiceImpl implements AdminService {
     private TagMapper tagMapper;
 
     @Override
-    public PageBean<Anime> getPendingReviews(Integer page, Integer pageSize, String name) {
+    public PageBean<Anime> getPendingReviews(Integer page, Integer pageSize, String name, String reviewStatus) {
         PageHelper.startPage(page, pageSize);
-        List<Anime> list = animeMapper.searchPending(name);
+        List<Anime> list = animeMapper.searchPending(name, reviewStatus);
         Page<Anime> p = (Page<Anime>) list;
         return new PageBean<>(p.getTotal(), p.getResult());
     }

@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.mapper.AnimeMapper;
 import top.huyuhao.anime.mapper.TagMapper;
 import top.huyuhao.anime.pojo.Anime;
@@ -58,6 +59,7 @@ public class AnimeServiceImpl implements AnimeService {
     @Transactional
     public Result addAnime(Anime anime, List<Integer> tagIds) {
         anime.setReviewStatus("approved");
+        anime.setSubmittedBy(UserContext.getUserId());
         animeMapper.update(anime);
         // 关联标签
         if (tagIds != null) {
@@ -101,5 +103,13 @@ public class AnimeServiceImpl implements AnimeService {
             }
         }
         return Result.success("提交成功，等待管理员审核");
+    }
+
+    @Override
+    public PageBean<Anime> getMySubmissions(Integer page, Integer pageSize, String reviewStatus, Integer userId) {
+        PageHelper.startPage(page, pageSize);
+        List<Anime> list = animeMapper.searchBySubmitter(userId, reviewStatus);
+        Page<Anime> p = (Page<Anime>) list;
+        return new PageBean<>(p.getTotal(), p.getResult());
     }
 }

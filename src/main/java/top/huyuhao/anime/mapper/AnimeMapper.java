@@ -58,6 +58,11 @@ public interface AnimeMapper {
                 @Param("reviewedBy") Integer reviewedBy,
                 @Param("reviewComment") String reviewComment);
 
-    // 待审核列表（分页由 PageHelper 处理）
-    List<Anime> searchPending(@Param("name") String name);
+    // 审核列表（分页由 PageHelper 处理），reviewStatus 为空时查全部（排除 preparing）
+    List<Anime> searchPending(@Param("name") String name,
+                             @Param("reviewStatus") String reviewStatus);
+
+    // 查询当前用户的提交记录（分页由 PageHelper 处理）
+    List<Anime> searchBySubmitter(@Param("submittedBy") Integer submittedBy,
+                                  @Param("reviewStatus") String reviewStatus);
 }

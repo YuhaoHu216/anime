@@ -21,11 +21,12 @@ public class AdminController {
     private AdminService adminService;
 
     @GetMapping("/reviews")
-    @Operation(summary = "获取待审核动漫列表")
+    @Operation(summary = "获取审核动漫列表", description = "不传 reviewStatus 时返回全部（排除 preparing），传值则按状态筛选")
     public Result getReviews(@Parameter(description = "页码") @RequestParam(defaultValue = "1") Integer page,
                              @Parameter(description = "每页条数") @RequestParam(defaultValue = "20") Integer pageSize,
-                             @Parameter(description = "动漫名称筛选") @RequestParam(required = false) String name) {
-        return Result.success(adminService.getPendingReviews(page, pageSize, name));
+                             @Parameter(description = "动漫名称筛选") @RequestParam(required = false) String name,
+                             @Parameter(description = "审核状态筛选（pending/approved/rejected）") @RequestParam(required = false) String reviewStatus) {
+        return Result.success(adminService.getPendingReviews(page, pageSize, name, reviewStatus));
     }
 
     @PostMapping("/review/{id}")

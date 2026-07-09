@@ -52,7 +52,6 @@ public class AnimeController {
     public Result addAnime(@Parameter(description = "动漫信息（JSON）") @RequestBody AnimeAddDTO dto) {
         log.info("添加动漫: {}", dto.getNameCn());
         Anime anime = dto.toAnime();
-        anime.setSubmittedBy(UserContext.getUserId());
         return animeService.addAnime(anime, dto.getTagIds());
     }
 
@@ -78,5 +77,15 @@ public class AnimeController {
         log.info("用户提交动漫: {}, userId={}", dto.getNameCn(), userId);
         Anime anime = dto.toAnime();
         return animeService.submitAnime(anime, dto.getTagIds(), userId);
+    }
+
+    @GetMapping("/my-submissions")
+    @Operation(summary = "获取当前用户的提交记录", description = "查询当前登录用户的所有提交记录，支持按审核状态筛选")
+    public Result getMySubmissions(@Parameter(description = "页码") @RequestParam(defaultValue = "1") Integer page,
+                                   @Parameter(description = "每页条数") @RequestParam(defaultValue = "20") Integer pageSize,
+                                   @Parameter(description = "审核状态筛选（pending/approved/rejected）") @RequestParam(required = false) String reviewStatus) {
+        Integer userId = UserContext.getUserId();
+        log.info("查询用户提交记录: userId={}, reviewStatus={}", userId, reviewStatus);
+        return Result.success(animeService.getMySubmissions(page, pageSize, reviewStatus, userId));
     }
 }

@@ -24,4 +24,6 @@ public interface AnimeService {
     Result deleteAnime(Integer id);
 
     Result submitAnime(Anime anime, List<Integer> tagIds, Integer userId);
+
+    PageBean<Anime> getMySubmissions(Integer page, Integer pageSize, String reviewStatus, Integer userId);
 }

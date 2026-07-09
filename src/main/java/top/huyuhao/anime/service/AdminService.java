@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface AdminService {
 
-    // 动漫审核
-    PageBean<Anime> getPendingReviews(Integer page, Integer pageSize, String name);
+    // 动漫审核列表（reviewStatus 为空时查全部，排除 preparing）
+    PageBean<Anime> getPendingReviews(Integer page, Integer pageSize, String name, String reviewStatus);
 
     Result reviewAnime(Integer animeId, String reviewStatus, String reviewComment, Integer adminId);
 
