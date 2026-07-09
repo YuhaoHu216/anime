@@ -28,6 +28,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/error",
                         "/anime/search",
                         "/anime/{id}",
+                        // 文件访问（图片等静态资源，无需认证）
+                        "/file/**",
                         // Swagger / Knife4j
                         "/doc.html",
                         "/swagger-ui/**",
