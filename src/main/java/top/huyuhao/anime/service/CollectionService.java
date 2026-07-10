@@ -2,6 +2,7 @@ package top.huyuhao.anime.service;
 
 import top.huyuhao.anime.pojo.Collection;
 import top.huyuhao.anime.pojo.CollectionItem;
+import top.huyuhao.anime.pojo.PageBean;
 import top.huyuhao.anime.pojo.Result;
 
 import java.util.List;
@@ -24,5 +25,5 @@ public interface CollectionService {
 
     Result moveItem(Integer fromCollectionId, Integer toCollectionId, Integer animeId);
 
-    List<CollectionItem> getItems(Integer collectionId, Integer page, Integer pageSize);
+    PageBean<CollectionItem> getItems(Integer collectionId, Integer page, Integer pageSize);
 }

@@ -1,12 +1,16 @@
 package top.huyuhao.anime.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.huyuhao.anime.mapper.CollectionItemMapper;
 import top.huyuhao.anime.mapper.CollectionMapper;
+import top.huyuhao.anime.mapper.TagMapper;
 import top.huyuhao.anime.pojo.Collection;
 import top.huyuhao.anime.pojo.CollectionItem;
+import top.huyuhao.anime.pojo.PageBean;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.service.CollectionService;
 
@@ -20,6 +24,9 @@ public class CollectionServiceImpl implements CollectionService {
 
     @Autowired
     private CollectionItemMapper collectionItemMapper;
+
+    @Autowired
+    private TagMapper tagMapper;
 
     @Override
     public Result createCollection(Collection collection) {
@@ -87,8 +94,14 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public List<CollectionItem> getItems(Integer collectionId, Integer page, Integer pageSize) {
-        // 简单不分页返回（后续可加 PageHelper）
-        return collectionItemMapper.findByCollectionId(collectionId);
+    public PageBean<CollectionItem> getItems(Integer collectionId, Integer page, Integer pageSize) {
+        PageHelper.startPage(page, pageSize);
+        List<CollectionItem> items = collectionItemMapper.findByCollectionId(collectionId);
+        Page<CollectionItem> p = (Page<CollectionItem>) items;
+        // 批量加载标签
+        for (CollectionItem item : p.getResult()) {
+            item.setTags(tagMapper.findByAnimeId(item.getAnimeId()));
+        }
+        return new PageBean<>(p.getTotal(), p.getResult());
     }
 }
