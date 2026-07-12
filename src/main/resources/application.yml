@@ -1,24 +1,26 @@
+# ========================================
+# 公共配置（所有环境共享）
+# ========================================
+
 server:
   port: 8081
   servlet:
     context-path: /api
 
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/anime
-    username: root
-    password: Zf9@Qv7!Lm2Xc8$HpT8+rK!2pWq9@Vx6$Mn
-
+  application:
+    name: anime
+  profiles:
+    active: dev
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 100MB
 
+
 mybatis:
   mapper-locations: classpath*:mapper/**/*.xml
   configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
 
 # Knife4j (Swagger) 接口文档配置
@@ -41,13 +43,10 @@ knife4j:
 
 # JWT 配置
 jwt:
-  secret: animeBackendSecretKeyForJwtToken2026!@#
+  secret: ${JWT_SECRET:animeBackendSecretKeyForJwtToken2026!@#}
   expiration: 31536000  # token 过期时间（秒），365 天
 
 # 应用自定义配置
 app:
   upload:
-    path: D:/uploads
     cover-dir: covers
-  base-url: http://localhost:8081/api
-

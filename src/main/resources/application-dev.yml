@@ -1,0 +1,20 @@
+# ========================================
+# 开发环境配置
+# ========================================
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/anime
+    username: root
+    password: Zf9@Qv7!Lm2Xc8$HpT8+rK!2pWq9@Vx6$Mn
+
+# 开发时开启 SQL 日志（按需取消注释）
+# mybatis:
+#   configuration:
+#     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+app:
+  upload:
+    path: D:/uploads
+  base-url: http://localhost:8081/api

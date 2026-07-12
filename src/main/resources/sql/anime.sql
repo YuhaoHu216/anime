@@ -32,7 +32,7 @@ CREATE TABLE user (
 -- ---------------------------------------------------
 CREATE TABLE anime (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  name_cn VARCHAR(200) NOT NULL COMMENT '中文名',
+  name_cn VARCHAR(200) COMMENT '中文名',
   name_jp VARCHAR(200) DEFAULT NULL COMMENT '日文名',
   broadcast_time VARCHAR(50) COMMENT '放送日期，如 2026-07-09',
   bangumi_score VARCHAR(10) COMMENT 'Bangumi评分',

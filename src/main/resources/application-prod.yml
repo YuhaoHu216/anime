@@ -1,0 +1,16 @@
+# ========================================
+# 生产环境配置
+# 敏感信息通过环境变量注入，不要硬编码在此文件
+# ========================================
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://8.156.66.24:3306/anime
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:Zf9@Qv7!Lm2Xc8$HpT8+rK!2pWq9@Vx6$Mn}
+
+app:
+  upload:
+    path: ${APP_UPLOAD_PATH:/root/my-anime/backend/uploads}
+  base-url: ${APP_BASE_URL:http://8.156.66.24:8081/api}

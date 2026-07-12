@@ -1,3 +1,4 @@
 - 查询代码文件请使用codegraph
 - 不要改动无关文件
 - 不要自行commit代码
+- 如果涉及到修改数据库字段的时候，修改resources\sql 文件

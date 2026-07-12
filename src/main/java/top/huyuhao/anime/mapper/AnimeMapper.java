@@ -44,7 +44,7 @@ public interface AnimeMapper {
             "broadcast_time = #{broadcastTime}, bangumi_score = #{bangumiScore}, " +
             "episode = #{episode}, cover_url = #{coverUrl}, " +
             "official_website = #{officialWebsite}, " +
-            "description = #{description}, review_status = #{reviewStatus},submitted_by = #{submittedBy} where id = #{id}")
+            "description = #{description} where id = #{id}")
     void update(Anime anime);
 
     @Delete("delete from anime where id = #{id}")
