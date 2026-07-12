@@ -48,6 +48,29 @@
         order by created_at desc
     </select>
 
+    <!-- 更新动漫信息，review_status 和 submitted_by 可选更新 -->
+    <update id="update">
+        update anime
+        <set>
+            name_cn = #{nameCn},
+            name_jp = #{nameJp},
+            broadcast_time = #{broadcastTime},
+            bangumi_score = #{bangumiScore},
+            episode = #{episode},
+            cover_url = #{coverUrl},
+            official_website = #{officialWebsite},
+            bangumi_url = #{bangumiUrl},
+            description = #{description},
+            <if test="reviewStatus != null and reviewStatus != ''" >
+                review_status = #{reviewStatus},
+            </if>
+            <if test="submittedBy != null and submittedBy != ''">
+                submitted_by = #{submittedBy},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
     <!-- 查询当前用户的提交记录 -->
     <select id="searchBySubmitter" resultType="top.huyuhao.anime.pojo.Anime">
         select *

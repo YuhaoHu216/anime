@@ -37,6 +37,9 @@ public class AnimeUpdateDTO {
     @Schema(description = "官方网址", example = "https://shingeki.tv/")
     private String officialWebsite;
 
+    @Schema(description = "Bangumi 地址", example = "https://bangumi.tv/subject/123456")
+    private String bangumiUrl;
+
     @Schema(description = "动漫简介")
     private String description;
 
@@ -56,6 +59,7 @@ public class AnimeUpdateDTO {
         anime.setEpisode(this.episode);
         anime.setCoverUrl(this.coverUrl);
         anime.setOfficialWebsite(this.officialWebsite);
+        anime.setBangumiUrl(this.bangumiUrl);
         anime.setDescription(this.description);
         return anime;
     }
