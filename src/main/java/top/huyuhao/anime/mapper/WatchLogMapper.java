@@ -57,4 +57,54 @@ public interface WatchLogMapper {
     @Select("select coalesce(sum(ep_count), 0) from watch_log " +
             "where user_id = #{userId} and anime_id = #{animeId}")
     Integer getTotalEpisodes(@Param("userId") Integer userId, @Param("animeId") Integer animeId);
+
+    // ============ 首页统计专用 ============
+
+    /** 累计追番去重动漫数 */
+    @Select("select count(distinct anime_id) from watch_log where user_id = #{userId}")
+    Integer countDistinctAnime(@Param("userId") Integer userId);
+
+    /** 累计总集数 */
+    @Select("select coalesce(sum(ep_count), 0) from watch_log where user_id = #{userId}")
+    Integer sumEpisodes(@Param("userId") Integer userId);
+
+    /** 当月集数 */
+    @Select("select coalesce(sum(ep_count), 0) from watch_log " +
+            "where user_id = #{userId} and watch_date between #{startDate} and #{endDate}")
+    Integer sumMonthEpisodes(@Param("userId") Integer userId,
+                             @Param("startDate") LocalDate startDate,
+                             @Param("endDate") LocalDate endDate);
+
+    /** 用户所有追番日期（降序，用于计算连续天数） */
+    @Select("select distinct watch_date from watch_log " +
+            "where user_id = #{userId} order by watch_date desc")
+    List<LocalDate> getDistinctWatchDates(@Param("userId") Integer userId);
+
+    /** 每日集数统计（热力图数据源） */
+    @Select("select date_format(watch_date, '%Y-%m-%d') as `date`, sum(ep_count) as `count` " +
+            "from watch_log " +
+            "where user_id = #{userId} and watch_date between #{startDate} and #{endDate} " +
+            "group by watch_date order by watch_date")
+    List<java.util.Map<String, Object>> getDailyStats(@Param("userId") Integer userId,
+                                                       @Param("startDate") LocalDate startDate,
+                                                       @Param("endDate") LocalDate endDate);
+
+    /** 最近N条追番记录（含动漫名称和封面） */
+    @Select("select wl.*, a.name_cn as anime_name_cn, a.cover_url as anime_cover_url " +
+            "from watch_log wl inner join anime a on wl.anime_id = a.id " +
+            "where wl.user_id = #{userId} " +
+            "order by wl.watch_date desc, wl.created_at desc " +
+            "limit #{limit}")
+    @Results({
+            @Result(property = "userId", column = "user_id"),
+            @Result(property = "animeId", column = "anime_id"),
+            @Result(property = "watchDate", column = "watch_date"),
+            @Result(property = "epStart", column = "ep_start"),
+            @Result(property = "epEnd", column = "ep_end"),
+            @Result(property = "epCount", column = "ep_count"),
+            @Result(property = "createdAt", column = "created_at"),
+            @Result(property = "animeNameCn", column = "anime_name_cn"),
+            @Result(property = "animeCoverUrl", column = "anime_cover_url")
+    })
+    List<WatchLog> getRecentLogs(@Param("userId") Integer userId, @Param("limit") Integer limit);
 }

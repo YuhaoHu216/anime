@@ -14,9 +14,11 @@ import top.huyuhao.anime.pojo.PageBean;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.WatchLog;
 import top.huyuhao.anime.service.WatchLogService;
+import top.huyuhao.anime.pojo.dto.WatchStatsDTO;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class WatchLogServiceImpl implements WatchLogService {
@@ -73,6 +75,59 @@ public class WatchLogServiceImpl implements WatchLogService {
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.plusMonths(1).minusDays(1);
         return watchLogMapper.findWatchDates(userId, startDate, endDate);
+    }
+
+    @Override
+    public WatchStatsDTO getStats(Integer userId, LocalDate dailyStartDate, LocalDate dailyEndDate) {
+        WatchStatsDTO dto = new WatchStatsDTO();
+
+        // 统计卡片
+        dto.setTotalAnime(watchLogMapper.countDistinctAnime(userId));
+        dto.setTotalEpisodes(watchLogMapper.sumEpisodes(userId));
+
+        LocalDate now = LocalDate.now();
+        LocalDate monthStart = now.withDayOfMonth(1);
+        dto.setMonthEpisodes(watchLogMapper.sumMonthEpisodes(userId, monthStart, now));
+
+        // 连续天数
+        List<LocalDate> distinctDates = watchLogMapper.getDistinctWatchDates(userId);
+        dto.setStreakDays(calcStreakDays(distinctDates, now));
+
+        // 每日集数（热力图）
+        List<Map<String, Object>> rawDaily = watchLogMapper.getDailyStats(userId, dailyStartDate, dailyEndDate);
+        List<WatchStatsDTO.DailyStats> dailyStats = new java.util.ArrayList<>();
+        if (rawDaily != null) {
+            for (Map<String, Object> row : rawDaily) {
+                WatchStatsDTO.DailyStats ds = new WatchStatsDTO.DailyStats();
+                ds.setDate((String) row.get("date"));
+                ds.setCount(((Number) row.get("count")).intValue());
+                dailyStats.add(ds);
+            }
+        }
+        dto.setDailyStats(dailyStats);
+
+        return dto;
+    }
+
+    @Override
+    public List<WatchLog> getRecentLogs(Integer userId, Integer limit) {
+        return watchLogMapper.getRecentLogs(userId, limit);
+    }
+
+    /**
+     * 计算连续追番天数：从今天开始向前数，遇到中断即停止。
+     * 如果今天没有记录，则从昨天开始算。
+     */
+    private int calcStreakDays(List<LocalDate> distinctDates, LocalDate today) {
+        if (distinctDates == null || distinctDates.isEmpty()) return 0;
+        java.util.Set<LocalDate> dateSet = new java.util.HashSet<>(distinctDates);
+        int streak = 0;
+        LocalDate cursor = dateSet.contains(today) ? today : today.minusDays(1);
+        while (dateSet.contains(cursor)) {
+            streak++;
+            cursor = cursor.minusDays(1);
+        }
+        return streak;
     }
 
     private void addToDefaultCollection(Integer userId, Integer animeId, String collectionName) {

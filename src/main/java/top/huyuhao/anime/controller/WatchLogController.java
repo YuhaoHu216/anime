@@ -11,6 +11,7 @@ import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.WatchLog;
 import top.huyuhao.anime.pojo.dto.WatchLogAddDTO;
 import top.huyuhao.anime.pojo.dto.WatchLogUpdateDTO;
+import top.huyuhao.anime.pojo.dto.WatchStatsDTO;
 import top.huyuhao.anime.service.WatchLogService;
 
 import java.time.LocalDate;
@@ -77,5 +78,24 @@ public class WatchLogController {
         return Result.success(dates);
     }
 
-    // todo 后续添加按月份，按年的数据统计
+    @GetMapping("/stats")
+    @Operation(summary = "获取追番统计数据", description = "返回统计卡片数据+每日集数（热力图）；用户身份从 JWT 获取")
+    public Result getStats(@Parameter(description = "每日统计起始日期（yyyy-MM-dd），默认当年1月1日")
+                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+                           @Parameter(description = "每日统计结束日期（yyyy-MM-dd），默认今天")
+                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
+        Integer userId = UserContext.getUserId();
+        if (startDate == null) startDate = LocalDate.of(LocalDate.now().getYear(), 1, 1);
+        if (endDate == null) endDate = LocalDate.now();
+        WatchStatsDTO stats = watchLogService.getStats(userId, startDate, endDate);
+        return Result.success(stats);
+    }
+
+    @GetMapping("/logs/recent")
+    @Operation(summary = "获取最近追番记录", description = "用户身份从 JWT 获取，默认返回最近5条")
+    public Result getRecentLogs(@Parameter(description = "返回条数") @RequestParam(defaultValue = "5") Integer limit) {
+        Integer userId = UserContext.getUserId();
+        List<WatchLog> logs = watchLogService.getRecentLogs(userId, limit);
+        return Result.success(logs);
+    }
 }
