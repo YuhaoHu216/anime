@@ -27,6 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/health",
                         "/error",
                         "/anime/search",
+                        "/anime/proxy-image",
                         "/anime/info/{id}",
                         // 文件访问（图片等静态资源，无需认证）
                         "/file/**",

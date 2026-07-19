@@ -5,11 +5,17 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Anime;
 import top.huyuhao.anime.pojo.dto.AnimeAddDTO;
 import top.huyuhao.anime.pojo.dto.AnimeUpdateDTO;
+import top.huyuhao.anime.pojo.dto.BangumiInfo;
+import top.huyuhao.anime.pojo.dto.BangumiParseRequest;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.service.AnimeService;
 
@@ -24,7 +30,6 @@ public class AnimeController {
     private AnimeService animeService;
 
     @PostMapping("/prepare")
-    @Operation(summary = "预分配动漫ID", description = "新增动漫前预占一个ID，用于先上传封面再提交数据")
     public Result prepare() {
         Integer animeId = animeService.prepareAnime();
         log.info("预分配动漫ID: {}", animeId);
@@ -87,5 +92,20 @@ public class AnimeController {
         Integer userId = UserContext.getUserId();
         log.info("查询用户提交记录: userId={}, reviewStatus={}", userId, reviewStatus);
         return Result.success(animeService.getMySubmissions(page, pageSize, reviewStatus, userId));
+    }
+
+    @PostMapping("/parse-bangumi")
+    public Result parseBangumi(@RequestBody BangumiParseRequest request) {
+        log.info("解析 Bangumi 地址: {}", request.getBangumiUrl());
+        BangumiInfo info = animeService.parseBangumiInfo(request.getBangumiUrl());
+        return Result.success(info);
+    }
+
+    @GetMapping("/proxy-image")
+    public ResponseEntity<Resource> proxyImage(@RequestParam String url) {
+        Resource resource = animeService.proxyImage(url);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE)
+                .body(resource);
     }
 }

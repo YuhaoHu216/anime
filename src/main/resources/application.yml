@@ -50,3 +50,9 @@ jwt:
 app:
   upload:
     cover-dir: covers
+
+# Bangumi API 代理（翻墙访问 api.bgm.tv）
+bangumi:
+  proxy:
+    host: ${BGM_PROXY_HOST:127.0.0.1}
+    port: ${BGM_PROXY_PORT:7890}
