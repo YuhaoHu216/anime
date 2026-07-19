@@ -39,7 +39,7 @@ public class AnimeController {
     @GetMapping("/search")
     @Operation(summary = "搜索动漫", description = "支持按名称、状态、标签ID分页搜索动漫")
     public Result search(@Parameter(description = "页码") @RequestParam(defaultValue = "1") Integer page,
-                         @Parameter(description = "每页条数") @RequestParam(defaultValue = "20") Integer pageSize,
+                         @Parameter(description = "每页条数") @RequestParam(defaultValue = "24") Integer pageSize,
                          @Parameter(description = "动漫名称（模糊搜索）") @RequestParam(required = false) String name,
                          @Parameter(description = "标签ID筛选") @RequestParam(required = false) Integer tagId) {
         log.info("搜索动漫: name={}, state={}, tagId={}", name, tagId);
