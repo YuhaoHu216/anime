@@ -18,6 +18,7 @@ public class WatchLog {
     private Integer epStart;
     private Integer epEnd;
     private Integer epCount;
+    private String epNos;
     private String notes;
     private LocalDateTime createdAt;
     // 非数据库字段：关联的动漫信息（用于列表展示）

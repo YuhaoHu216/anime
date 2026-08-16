@@ -14,6 +14,7 @@ import top.huyuhao.anime.pojo.PageBean;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.WatchLog;
 import top.huyuhao.anime.service.WatchLogService;
+import top.huyuhao.anime.pojo.dto.WatchProgressDTO;
 import top.huyuhao.anime.pojo.dto.WatchStatsDTO;
 
 import java.time.LocalDate;
@@ -112,6 +113,28 @@ public class WatchLogServiceImpl implements WatchLogService {
     @Override
     public List<WatchLog> getRecentLogs(Integer userId, Integer limit) {
         return watchLogMapper.getRecentLogs(userId, limit);
+    }
+
+    @Override
+    public WatchProgressDTO getProgress(Integer userId, Integer animeId) {
+        Integer maxEpEnd = watchLogMapper.getMaxEpEnd(userId, animeId);
+        List<String> watchedEpNos = new java.util.ArrayList<>();
+        List<String> epNosList = watchLogMapper.findEpNosByUserAndAnime(userId, animeId);
+        if (epNosList != null) {
+            java.util.Set<String> set = new java.util.LinkedHashSet<>();
+            for (String epNos : epNosList) {
+                if (epNos != null) {
+                    for (String no : epNos.split(",")) {
+                        String t = no.trim();
+                        if (!t.isEmpty()) {
+                            set.add(t);
+                        }
+                    }
+                }
+            }
+            watchedEpNos.addAll(set);
+        }
+        return new WatchProgressDTO(maxEpEnd, watchedEpNos);
     }
 
     /**

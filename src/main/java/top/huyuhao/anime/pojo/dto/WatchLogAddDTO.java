@@ -28,6 +28,9 @@ public class WatchLogAddDTO {
     @Schema(description = "观看集数，不填默认为 1", example = "1")
     private Integer epCount;
 
+    @Schema(description = "观看集号明细，逗号分隔（含SP/OVA/OAD番外）", example = "1,2,3,SP")
+    private String epNos;
+
     @Schema(description = "备注", example = "一口气看完，超爽")
     private String notes;
 
@@ -41,6 +44,7 @@ public class WatchLogAddDTO {
         watchLog.setEpStart(this.epStart);
         watchLog.setEpEnd(this.epEnd);
         watchLog.setEpCount(this.epCount);
+        watchLog.setEpNos(this.epNos);
         watchLog.setNotes(this.notes);
         return watchLog;
     }

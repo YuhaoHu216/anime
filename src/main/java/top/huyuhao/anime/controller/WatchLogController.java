@@ -98,4 +98,11 @@ public class WatchLogController {
         List<WatchLog> logs = watchLogService.getRecentLogs(userId, limit);
         return Result.success(logs);
     }
+
+    @GetMapping("/progress/{animeId}")
+    @Operation(summary = "获取某动漫的追番进度", description = "返回数字正片进度(maxEpEnd) + 已看集号明细(watchedEpNos，含番外)；用户身份从 JWT 获取")
+    public Result getProgress(@Parameter(description = "动漫ID") @PathVariable Integer animeId) {
+        Integer userId = UserContext.getUserId();
+        return Result.success(watchLogService.getProgress(userId, animeId));
+    }
 }

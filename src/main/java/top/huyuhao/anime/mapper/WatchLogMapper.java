@@ -9,13 +9,13 @@ import java.util.List;
 @Mapper
 public interface WatchLogMapper {
 
-    @Insert("insert into watch_log(user_id, anime_id, watch_date, ep_start, ep_end, ep_count, notes) " +
-            "values (#{userId}, #{animeId}, #{watchDate}, #{epStart}, #{epEnd}, #{epCount}, #{notes})")
+    @Insert("insert into watch_log(user_id, anime_id, watch_date, ep_start, ep_end, ep_count, ep_nos, notes) " +
+            "values (#{userId}, #{animeId}, #{watchDate}, #{epStart}, #{epEnd}, #{epCount}, #{epNos}, #{notes})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(WatchLog watchLog);
 
     @Update("update watch_log set watch_date = #{watchDate}, ep_start = #{epStart}, " +
-            "ep_end = #{epEnd}, ep_count = #{epCount}, notes = #{notes} where id = #{id}")
+            "ep_end = #{epEnd}, ep_count = #{epCount}, ep_nos = #{epNos}, notes = #{notes} where id = #{id}")
     void update(WatchLog watchLog);
 
     @Delete("delete from watch_log where id = #{id}")
@@ -47,6 +47,7 @@ public interface WatchLogMapper {
             @Result(property = "epStart", column = "ep_start"),
             @Result(property = "epEnd", column = "ep_end"),
             @Result(property = "epCount", column = "ep_count"),
+            @Result(property = "epNos", column = "ep_nos"),
             @Result(property = "createdAt", column = "created_at"),
             @Result(property = "animeNameCn", column = "anime_name_cn"),
             @Result(property = "animeCoverUrl", column = "anime_cover_url")
@@ -57,6 +58,16 @@ public interface WatchLogMapper {
     @Select("select coalesce(sum(ep_count), 0) from watch_log " +
             "where user_id = #{userId} and anime_id = #{animeId}")
     Integer getTotalEpisodes(@Param("userId") Integer userId, @Param("animeId") Integer animeId);
+
+    // 某用户某动漫的追番进度（已看到的集数 = 最大结束集）
+    @Select("select coalesce(max(ep_end), 0) from watch_log " +
+            "where user_id = #{userId} and anime_id = #{animeId}")
+    Integer getMaxEpEnd(@Param("userId") Integer userId, @Param("animeId") Integer animeId);
+
+    // 某用户某动漫所有观看记录的集号明细（非空，用于进度合并）
+    @Select("select ep_nos from watch_log " +
+            "where user_id = #{userId} and anime_id = #{animeId} and ep_nos is not null and ep_nos != ''")
+    List<String> findEpNosByUserAndAnime(@Param("userId") Integer userId, @Param("animeId") Integer animeId);
 
     // ============ 首页统计专用 ============
 
@@ -102,6 +113,7 @@ public interface WatchLogMapper {
             @Result(property = "epStart", column = "ep_start"),
             @Result(property = "epEnd", column = "ep_end"),
             @Result(property = "epCount", column = "ep_count"),
+            @Result(property = "epNos", column = "ep_nos"),
             @Result(property = "createdAt", column = "created_at"),
             @Result(property = "animeNameCn", column = "anime_name_cn"),
             @Result(property = "animeCoverUrl", column = "anime_cover_url")
