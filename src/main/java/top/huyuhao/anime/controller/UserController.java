@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Result;
+import top.huyuhao.anime.pojo.dto.PrivacyUpdateDTO;
 import top.huyuhao.anime.pojo.dto.UserRegisterDTO;
 import top.huyuhao.anime.pojo.dto.UserUpdateDTO;
 import top.huyuhao.anime.service.UserService;
@@ -67,5 +68,25 @@ public class UserController {
             return Result.error("未登录");
         }
         return userService.updatePassword(userId, oldPassword, newPassword);
+    }
+
+    @GetMapping("/privacy")
+    @Operation(summary = "获取隐私设置", description = "从 JWT 获取用户身份，返回个人信息/收藏夹/追番记录三个公开开关")
+    public Result getPrivacy() {
+        Integer userId = UserContext.getUserId();
+        if (userId == null) {
+            return Result.error("未登录");
+        }
+        return userService.getPrivacy(userId);
+    }
+
+    @PutMapping("/privacy")
+    @Operation(summary = "更新隐私设置", description = "从 JWT 获取用户身份，更新个人信息/收藏夹/追番记录三个公开开关")
+    public Result updatePrivacy(@RequestBody PrivacyUpdateDTO dto) {
+        Integer userId = UserContext.getUserId();
+        if (userId == null) {
+            return Result.error("未登录");
+        }
+        return userService.updatePrivacy(userId, dto);
     }
 }

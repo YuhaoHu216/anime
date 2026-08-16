@@ -2,6 +2,7 @@ package top.huyuhao.anime.service;
 
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.User;
+import top.huyuhao.anime.pojo.dto.PrivacyUpdateDTO;
 import top.huyuhao.anime.pojo.dto.UserRegisterDTO;
 import top.huyuhao.anime.pojo.dto.UserUpdateDTO;
 
@@ -19,4 +20,8 @@ public interface UserService {
     Result updateProfile(Integer userId, UserUpdateDTO dto);
 
     Result updatePassword(Integer id, String oldPassword, String newPassword);
+
+    Result getPrivacy(Integer id);
+
+    Result updatePrivacy(Integer userId, PrivacyUpdateDTO dto);
 }

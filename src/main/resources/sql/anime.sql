@@ -22,6 +22,9 @@ CREATE TABLE user (
   phone_number VARCHAR(20) DEFAULT NULL COMMENT '手机号',
   role VARCHAR(20) DEFAULT 'user' COMMENT 'user/admin',
   avatar_url VARCHAR(500) DEFAULT NULL COMMENT '头像路径',
+  profile_public TINYINT(1) DEFAULT 0 COMMENT '个人信息是否公开', -- 2026-08-16 页面分享功能新增，要同步到服务器 执行：ALTER TABLE user ADD COLUMN profile_public TINYINT(1) DEFAULT 0 COMMENT '个人信息是否公开' AFTER avatar_url;
+  collection_public TINYINT(1) DEFAULT 0 COMMENT '收藏夹是否公开', -- 同上：ALTER TABLE user ADD COLUMN collection_public TINYINT(1) DEFAULT 0 COMMENT '收藏夹是否公开' AFTER profile_public;
+  watch_public TINYINT(1) DEFAULT 0 COMMENT '追番记录是否公开', -- 同上：ALTER TABLE user ADD COLUMN watch_public TINYINT(1) DEFAULT 0 COMMENT '追番记录是否公开' AFTER collection_public;
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uk_account (account)

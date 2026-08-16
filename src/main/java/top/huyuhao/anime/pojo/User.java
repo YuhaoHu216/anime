@@ -18,6 +18,9 @@ public class User {
     private String phoneNumber;
     private String role;
     private String avatarUrl;
+    private Boolean profilePublic;
+    private Boolean collectionPublic;
+    private Boolean watchPublic;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -8,6 +8,7 @@ import top.huyuhao.anime.mapper.UserMapper;
 import top.huyuhao.anime.pojo.Collection;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.User;
+import top.huyuhao.anime.pojo.dto.PrivacyUpdateDTO;
 import top.huyuhao.anime.pojo.dto.UserRegisterDTO;
 import top.huyuhao.anime.pojo.dto.UserUpdateDTO;
 import top.huyuhao.anime.service.UserService;
@@ -87,6 +88,30 @@ public class UserServiceImpl implements UserService {
         }
         userMapper.updatePassword(id, encoder.encode(newPassword));
         return Result.success("密码修改成功");
+    }
+
+    @Override
+    public Result getPrivacy(Integer id) {
+        User user = userMapper.findById(id);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        PrivacyUpdateDTO dto = new PrivacyUpdateDTO();
+        dto.setProfilePublic(user.getProfilePublic());
+        dto.setCollectionPublic(user.getCollectionPublic());
+        dto.setWatchPublic(user.getWatchPublic());
+        return Result.success(dto);
+    }
+
+    @Override
+    public Result updatePrivacy(Integer userId, PrivacyUpdateDTO dto) {
+        User user = new User();
+        user.setId(userId);
+        user.setProfilePublic(dto.getProfilePublic());
+        user.setCollectionPublic(dto.getCollectionPublic());
+        user.setWatchPublic(dto.getWatchPublic());
+        userMapper.updatePrivacy(user);
+        return Result.success("隐私设置已更新");
     }
 
     private void createDefaultCollections(Integer userId) {

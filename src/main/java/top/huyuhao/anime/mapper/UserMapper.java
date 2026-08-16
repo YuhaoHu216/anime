@@ -23,4 +23,8 @@ public interface UserMapper {
 
     @Update("update user set password = #{password} where id = #{id}")
     void updatePassword(@Param("id") Integer id, @Param("password") String password);
+
+    @Update("update user set profile_public = #{profilePublic}, collection_public = #{collectionPublic}, " +
+            "watch_public = #{watchPublic} where id = #{id}")
+    void updatePrivacy(User user);
 }

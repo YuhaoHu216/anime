@@ -29,6 +29,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/anime/search",
                         "/anime/proxy-image",
                         "/anime/info/{id}",
+                        // 页面分享（未登录访问他人公开主页）
+                        "/share/**",
                         // 文件访问（图片等静态资源，无需认证）
                         "/file/**",
                         // Swagger / Knife4j
