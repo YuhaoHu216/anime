@@ -87,6 +87,7 @@ CREATE TABLE watch_log (
   ep_start INT DEFAULT NULL COMMENT '起始集数',
   ep_end INT DEFAULT NULL COMMENT '结束集数',
   ep_count INT DEFAULT 1 COMMENT '看了几集',
+  ep_nos VARCHAR(500) DEFAULT NULL COMMENT '观看的集号明细，逗号分隔（含SP/OVA/OAD番外）', -- 2026-08-16修改，要同步到服务器 执行：ALTER TABLE watch_log ADD COLUMN ep_nos VARCHAR(500) DEFAULT NULL COMMENT '观看的集号明细，逗号分隔（含SP/OVA/OAD番外）' AFTER ep_count;
   notes TEXT COMMENT '当次笔记/感想',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_user_date (user_id, watch_date),
