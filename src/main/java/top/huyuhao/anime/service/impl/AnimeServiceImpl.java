@@ -16,15 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.mapper.AnimeMapper;
+import top.huyuhao.anime.mapper.EpisodeMapper;
 import top.huyuhao.anime.mapper.TagMapper;
 import top.huyuhao.anime.pojo.Anime;
+import top.huyuhao.anime.pojo.Episode;
 import top.huyuhao.anime.pojo.PageBean;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.Tag;
 import top.huyuhao.anime.pojo.dto.BangumiInfo;
+import top.huyuhao.anime.pojo.dto.EpisodeDTO;
 import top.huyuhao.anime.service.AnimeService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +40,9 @@ public class AnimeServiceImpl implements AnimeService {
 
     @Autowired
     private TagMapper tagMapper;
+
+    @Autowired
+    private EpisodeMapper episodeMapper;
 
     // Bangumi 代理配置（翻墙访问）
     @Value("${bangumi.proxy.host:}")
@@ -81,6 +88,7 @@ public class AnimeServiceImpl implements AnimeService {
             throw new RuntimeException("动漫不存在");
         }
         anime.setTags(tagMapper.findByAnimeId(id));
+        anime.setEpisodes(episodeMapper.findByAnimeId(id));
         return Result.success(anime);
     }
 
@@ -94,7 +102,7 @@ public class AnimeServiceImpl implements AnimeService {
 
     @Override
     @Transactional
-    public Result addAnime(Anime anime, List<Integer> tagIds) {
+    public Result addAnime(Anime anime, List<Integer> tagIds, List<EpisodeDTO> episodes) {
         anime.setReviewStatus("approved");
         anime.setSubmittedBy(UserContext.getUserId());
         animeMapper.update(anime);
@@ -103,12 +111,13 @@ public class AnimeServiceImpl implements AnimeService {
                 tagMapper.linkTag(anime.getId(), tagId);
             }
         }
+        replaceEpisodes(anime.getId(), episodes);
         return Result.success();
     }
 
     @Override
     @Transactional
-    public Result updateAnime(Anime anime, List<Integer> tagIds) {
+    public Result updateAnime(Anime anime, List<Integer> tagIds, List<EpisodeDTO> episodes) {
         animeMapper.update(anime);
         if (tagIds != null) {
             tagMapper.unlinkAllTags(anime.getId());
@@ -116,6 +125,7 @@ public class AnimeServiceImpl implements AnimeService {
                 tagMapper.linkTag(anime.getId(), tagId);
             }
         }
+        replaceEpisodes(anime.getId(), episodes);
         return Result.success("更新成功");
     }
 
@@ -127,9 +137,22 @@ public class AnimeServiceImpl implements AnimeService {
         return Result.success("删除成功");
     }
 
+    /**
+     * 全量替换某动漫的剧集：先删旧再批量插入新（客户端提交的是完整列表）
+     */
+    private void replaceEpisodes(Integer animeId, List<EpisodeDTO> episodes) {
+        episodeMapper.deleteByAnimeId(animeId);
+        if (episodes != null && !episodes.isEmpty()) {
+            List<Episode> list = episodes.stream()
+                    .map(EpisodeDTO::toEpisode)
+                    .collect(Collectors.toList());
+            episodeMapper.batchInsert(animeId, list);
+        }
+    }
+
     @Override
     @Transactional
-    public Result submitAnime(Anime anime, List<Integer> tagIds, Integer userId) {
+    public Result submitAnime(Anime anime, List<Integer> tagIds, Integer userId, List<EpisodeDTO> episodes) {
         anime.setReviewStatus("pending");
         anime.setSubmittedBy(userId);
         animeMapper.update(anime);
@@ -138,6 +161,7 @@ public class AnimeServiceImpl implements AnimeService {
                 tagMapper.linkTag(anime.getId(), tagId);
             }
         }
+        replaceEpisodes(anime.getId(), episodes);
         return Result.success("提交成功，等待管理员审核");
     }
 

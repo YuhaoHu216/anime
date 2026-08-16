@@ -5,6 +5,7 @@ import top.huyuhao.anime.pojo.Anime;
 import top.huyuhao.anime.pojo.PageBean;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.pojo.dto.BangumiInfo;
+import top.huyuhao.anime.pojo.dto.EpisodeDTO;
 
 import java.util.List;
 
@@ -19,13 +20,13 @@ public interface AnimeService {
      */
     Integer prepareAnime();
 
-    Result addAnime(Anime anime, List<Integer> tagIds);
+    Result addAnime(Anime anime, List<Integer> tagIds, List<EpisodeDTO> episodes);
 
-    Result updateAnime(Anime anime, List<Integer> tagIds);
+    Result updateAnime(Anime anime, List<Integer> tagIds, List<EpisodeDTO> episodes);
 
     Result deleteAnime(Integer id);
 
-    Result submitAnime(Anime anime, List<Integer> tagIds, Integer userId);
+    Result submitAnime(Anime anime, List<Integer> tagIds, Integer userId, List<EpisodeDTO> episodes);
 
     PageBean<Anime> getMySubmissions(Integer page, Integer pageSize, String reviewStatus, Integer userId);
 

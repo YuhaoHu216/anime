@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="top.huyuhao.anime.mapper.EpisodeMapper">
+
+    <!-- 批量插入剧集 -->
+    <insert id="batchInsert">
+        insert into episode(anime_id, ep_no, name, air_date, duration, sort)
+        values
+        <foreach collection="list" item="e" separator=",">
+            (#{animeId}, #{e.epNo}, #{e.name}, #{e.airDate}, #{e.duration}, #{e.sort})
+        </foreach>
+    </insert>
+
+</mapper>

@@ -124,3 +124,21 @@ CREATE TABLE collection_item (
   FOREIGN KEY (collection_id) REFERENCES collection(id) ON DELETE CASCADE,
   FOREIGN KEY (anime_id) REFERENCES anime(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='收藏条目表';
+
+-- ---------------------------------------------------
+-- Step 8: 创建 episode 剧集表
+-- ---------------------------------------------------
+CREATE TABLE episode (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  anime_id INT NOT NULL COMMENT '所属动漫ID',
+  ep_no VARCHAR(20) NOT NULL COMMENT '集号（1、2、SP、1.5 等）',
+  name VARCHAR(200) DEFAULT NULL COMMENT '集名',
+  air_date VARCHAR(20) DEFAULT NULL COMMENT '放送日期，如 2026-04-05',
+  duration INT DEFAULT NULL COMMENT '时长（总秒数）',
+  sort DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '排序号（越小越靠前，来自 Bangumi sort）',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_anime_ep (anime_id, ep_no),
+  KEY idx_anime (anime_id),
+  CONSTRAINT fk_episode_anime FOREIGN KEY (anime_id) REFERENCES anime(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='剧集信息表';

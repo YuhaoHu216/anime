@@ -57,7 +57,7 @@ public class AnimeController {
     public Result addAnime(@Parameter(description = "动漫信息（JSON）") @RequestBody AnimeAddDTO dto) {
         log.info("添加动漫: {}", dto.getNameCn());
         Anime anime = dto.toAnime();
-        return animeService.addAnime(anime, dto.getTagIds());
+        return animeService.addAnime(anime, dto.getTagIds(), dto.getEpisodes());
     }
 
     @PutMapping("/update")
@@ -65,7 +65,7 @@ public class AnimeController {
     public Result updateAnime(@Parameter(description = "动漫信息（JSON）") @RequestBody AnimeUpdateDTO dto) {
         log.info("修改动漫: id={}", dto.getId());
         Anime anime = dto.toAnime();
-        return animeService.updateAnime(anime, dto.getTagIds());
+        return animeService.updateAnime(anime, dto.getTagIds(), dto.getEpisodes());
     }
 
     @DeleteMapping("/{id}")
@@ -81,7 +81,7 @@ public class AnimeController {
         Integer userId = UserContext.getUserId();
         log.info("用户提交动漫: {}, userId={}", dto.getNameCn(), userId);
         Anime anime = dto.toAnime();
-        return animeService.submitAnime(anime, dto.getTagIds(), userId);
+        return animeService.submitAnime(anime, dto.getTagIds(), userId, dto.getEpisodes());
     }
 
     @GetMapping("/my-submissions")

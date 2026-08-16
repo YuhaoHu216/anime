@@ -31,4 +31,7 @@ public class Anime {
     // 非数据库字段：关联的标签列表
 
     private List<Tag> tags;
+
+    // 非数据库字段：剧集列表
+    private List<Episode> episodes;
 }

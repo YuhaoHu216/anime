@@ -46,6 +46,9 @@ public class AnimeAddDTO {
     @Schema(description = "关联标签 ID 列表", example = "[1, 2, 3]")
     private List<Integer> tagIds;
 
+    @Schema(description = "剧集列表")
+    private List<EpisodeDTO> episodes;
+
     /**
      * 将 DTO 转换为 Anime 实体对象
      */
