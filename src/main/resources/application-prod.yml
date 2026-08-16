@@ -13,4 +13,3 @@ spring:
 app:
   upload:
     path: ${APP_UPLOAD_PATH:/root/my-anime/backend/uploads}
-  base-url: ${APP_BASE_URL:http://8.156.66.24:8081/api}

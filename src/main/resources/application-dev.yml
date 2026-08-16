@@ -17,4 +17,3 @@ spring:
 app:
   upload:
     path: D:/uploads
-  base-url: http://localhost:8081/api

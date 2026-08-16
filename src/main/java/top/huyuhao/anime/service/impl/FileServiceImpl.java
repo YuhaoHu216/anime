@@ -20,9 +20,6 @@ public class FileServiceImpl implements FileService {
     @Value("${app.upload.cover-dir}")
     private String coverDir;
 
-    @Value("${app.base-url}")
-    private String baseUrl;
-
     @Override
     public String upload(MultipartFile file, Integer animeId) {
         if (file.isEmpty()) {
@@ -45,8 +42,8 @@ public class FileServiceImpl implements FileService {
             Path targetPath = dir.resolve(fileName);
             file.transferTo(targetPath.toFile());
 
-            // 返回完整可访问 URL
-            return baseUrl + "/file/" + coverDir + "/" + fileName;
+            // 返回相对路径（前端 getFileUrl 会拼成 /api/file/... 走同源协议，http/https 自适应）
+            return coverDir + "/" + fileName;
         } catch (IOException e) {
             throw new RuntimeException("文件上传失败: " + e.getMessage(), e);
         }
