@@ -24,6 +24,11 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        // 文件读取（GET /file/** 图片等静态资源）无需认证，但上传（POST）仍需走校验
+        if ("GET".equals(request.getMethod()) && request.getRequestURI().contains("/file/")) {
+            return true;
+        }
+
         // 从 Authorization 请求头获取 token
         String token = request.getHeader("Authorization");
 

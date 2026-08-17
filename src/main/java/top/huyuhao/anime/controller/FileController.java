@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import top.huyuhao.anime.context.UserContext;
 import top.huyuhao.anime.pojo.Result;
 import top.huyuhao.anime.service.FileService;
 
@@ -34,12 +35,18 @@ public class FileController {
     private String uploadPath;
 
     @PostMapping("/upload")
-    @Operation(summary = "上传文件", description = "上传文件到指定目录，返回完整可访问URL")
+    @Operation(summary = "上传文件", description = "上传文件，传 animeId 存封面目录；不传则上传当前用户头像")
     public Result upload(@Parameter(description = "文件") @RequestParam("file") MultipartFile file,
-                         @Parameter(description = "动漫ID（用于文件命名）") @RequestParam Integer animeId) {
+                         @Parameter(description = "动漫ID（封面命名用，头像上传可不传）") @RequestParam(required = false) Integer animeId) {
         log.info("上传文件,{}", file.getOriginalFilename());
-        String url = fileService.upload(file, animeId);
-        return Result.success("上传成功",url);
+        if (animeId != null) {
+            return Result.success("上传成功", fileService.upload(file, animeId));
+        }
+        Integer userId = UserContext.getUserId();
+        if (userId == null) {
+            throw new RuntimeException("未登录");
+        }
+        return Result.success("上传成功", fileService.uploadAvatar(file, userId));
     }
 
     @GetMapping("/{*path}")
