@@ -134,7 +134,25 @@ public class WatchLogServiceImpl implements WatchLogService {
             }
             watchedEpNos.addAll(set);
         }
-        return new WatchProgressDTO(maxEpEnd, watchedEpNos);
+        // 各集号的观看日期列表（按日期升序，同一天去重）
+        Map<String, List<String>> watchedEpDates = new java.util.LinkedHashMap<>();
+        List<Map<String, Object>> rows = watchLogMapper.findEpNosWithDatesByUserAndAnime(userId, animeId);
+        if (rows != null) {
+            for (Map<String, Object> row : rows) {
+                String epNos = (String) row.get("ep_nos");
+                String watchDate = String.valueOf(row.get("watch_date"));
+                if (epNos == null || epNos.isEmpty()) continue;
+                for (String no : epNos.split(",")) {
+                    String t = no.trim();
+                    if (t.isEmpty()) continue;
+                    List<String> dates = watchedEpDates.computeIfAbsent(t, k -> new java.util.ArrayList<>());
+                    if (dates.isEmpty() || !dates.get(dates.size() - 1).equals(watchDate)) {
+                        dates.add(watchDate);
+                    }
+                }
+            }
+        }
+        return new WatchProgressDTO(maxEpEnd, watchedEpNos, watchedEpDates);
     }
 
     /**

@@ -69,6 +69,14 @@ public interface WatchLogMapper {
             "where user_id = #{userId} and anime_id = #{animeId} and ep_nos is not null and ep_nos != ''")
     List<String> findEpNosByUserAndAnime(@Param("userId") Integer userId, @Param("animeId") Integer animeId);
 
+    // 某用户某动漫所有观看记录的集号明细 + 观看日期（按日期升序，用于进度时间展示）
+    @Select("select ep_nos, watch_date from watch_log " +
+            "where user_id = #{userId} and anime_id = #{animeId} " +
+            "and ep_nos is not null and ep_nos != '' " +
+            "order by watch_date")
+    List<java.util.Map<String, Object>> findEpNosWithDatesByUserAndAnime(@Param("userId") Integer userId,
+                                                                         @Param("animeId") Integer animeId);
+
     // ============ 首页统计专用 ============
 
     /** 累计追番去重动漫数 */
