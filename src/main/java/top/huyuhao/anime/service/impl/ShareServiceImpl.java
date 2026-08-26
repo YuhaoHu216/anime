@@ -8,6 +8,7 @@ import top.huyuhao.anime.pojo.Collection;
 import top.huyuhao.anime.pojo.CollectionItem;
 import top.huyuhao.anime.pojo.PageBean;
 import top.huyuhao.anime.pojo.User;
+import top.huyuhao.anime.pojo.WatchLog;
 import top.huyuhao.anime.pojo.dto.PrivacyUpdateDTO;
 import top.huyuhao.anime.pojo.dto.ShareProfileDTO;
 import top.huyuhao.anime.pojo.dto.ShareUser;
@@ -88,5 +89,17 @@ public class ShareServiceImpl implements ShareService {
             throw new RuntimeException("该收藏夹未公开");
         }
         return collectionService.getItems(collectionId, page, pageSize);
+    }
+
+    @Override
+    public List<WatchLog> getShareLogsByDate(String account, LocalDate date) {
+        User user = userMapper.findByAccount(account);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        if (!Boolean.TRUE.equals(user.getWatchPublic())) {
+            throw new RuntimeException("该用户未公开追番记录");
+        }
+        return watchLogService.getLogsByDate(user.getId(), date);
     }
 }

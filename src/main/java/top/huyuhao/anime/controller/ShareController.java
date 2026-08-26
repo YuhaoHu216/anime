@@ -35,4 +35,11 @@ public class ShareController {
                                            @Parameter(description = "每页条数") @RequestParam(defaultValue = "50") Integer pageSize) {
         return Result.success(shareService.getPublicCollectionItems(collectionId, page, pageSize));
     }
+
+    @GetMapping("/{account}/logs/date")
+    @Operation(summary = "按日期获取公开追番记录", description = "按账号+日期获取用户某天的追番记录，需用户公开追番记录，无需登录")
+    public Result getShareLogsByDate(@Parameter(description = "账号") @PathVariable String account,
+                                     @Parameter(description = "日期（yyyy-MM-dd）") @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        return Result.success(shareService.getShareLogsByDate(account, date));
+    }
 }
