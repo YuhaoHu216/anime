@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.huyuhao.anime.interceptor.JwtInterceptor;
 
 /**
- * Web MVC 配置 — 注册 JWT 拦截器，配置白名单
+ * Web MVC 配置 — 注册 JWT 拦截器（白名单已在拦截器内部处理）
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -18,26 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
-                // 拦截所有请求
-                .addPathPatterns("/**")
-                // 白名单：登录、注册、健康检查、Swagger/Knife4j 文档
-                .excludePathPatterns(
-                        "/user/login",
-                        "/user/register",
-                        "/health",
-                        "/error",
-                        "/anime/search",
-                        "/anime/proxy-image",
-                        "/anime/info/{id}",
-                        // 页面分享（未登录访问他人公开主页）
-                        "/share/**",
-                        // Swagger / Knife4j
-                        "/doc.html",
-                        "/swagger-ui/**",
-                        "/swagger-resources/**",
-                        "/v3/api-docs/**",
-                        "/webjars/**",
-                        "/favicon.ico"
-                );
+                // 拦截所有请求，公开路径由拦截器内部放行
+                .addPathPatterns("/**");
     }
 }

@@ -23,6 +23,9 @@ public class FileServiceImpl implements FileService {
     @Value("${app.upload.avatar-dir}")
     private String avatarDir;
 
+    @Value("${app.upload.comment-dir}")
+    private String commentDir;
+
     @Override
     public String upload(MultipartFile file, Integer animeId) {
         return saveFile(file, coverDir, animeId + "_");
@@ -31,6 +34,11 @@ public class FileServiceImpl implements FileService {
     @Override
     public String uploadAvatar(MultipartFile file, Integer userId) {
         return saveFile(file, avatarDir, userId + "_");
+    }
+
+    @Override
+    public String uploadComment(MultipartFile file, Integer userId) {
+        return saveFile(file, commentDir, userId + "_");
     }
 
     /**

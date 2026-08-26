@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="top.huyuhao.anime.mapper.CommentMapper">
+
+    <!-- 评论联查用户信息（用户名/头像/回复对象昵称） -->
+    <sql id="commentUserColumns">
+        c.id, c.anime_id, c.user_id, c.parent_id, c.reply_to_user_id, c.content, c.images,
+        c.like_count, c.dislike_count, c.created_at,
+        u.username, u.avatar_url,
+        rt.username as reply_to_username
+    </sql>
+
+    <select id="findById" resultType="top.huyuhao.anime.pojo.Comment">
+        select <include refid="commentUserColumns"/>
+        from comment c
+        inner join user u on c.user_id = u.id
+        left join user rt on c.reply_to_user_id = rt.id
+        where c.id = #{id}
+    </select>
+
+    <!-- 顶层评论（按时间倒序，供 PageHelper 分页） -->
+    <select id="findTopLevelByAnime" resultType="top.huyuhao.anime.pojo.Comment">
+        select <include refid="commentUserColumns"/>
+        from comment c
+        inner join user u on c.user_id = u.id
+        left join user rt on c.reply_to_user_id = rt.id
+        where c.anime_id = #{animeId} and c.parent_id is null
+        order by c.created_at desc
+    </select>
+
+    <!-- 批量取一批顶层评论下的全部子评论 -->
+    <select id="findChildrenByRootIds" resultType="top.huyuhao.anime.pojo.Comment">
+        select <include refid="commentUserColumns"/>
+        from comment c
+        inner join user u on c.user_id = u.id
+        left join user rt on c.reply_to_user_id = rt.id
+        where c.parent_id in
+        <foreach collection="rootIds" item="rid" open="(" separator="," close=")">#{rid}</foreach>
+        order by c.parent_id, c.created_at desc
+    </select>
+
+    <!-- 统计各顶层评论的子评论总数 -->
+    <select id="countChildrenByRootIds" resultType="java.util.Map">
+        select parent_id as rootId, count(*) as cnt
+        from comment
+        where parent_id in
+        <foreach collection="rootIds" item="rid" open="(" separator="," close=")">#{rid}</foreach>
+        group by parent_id
+    </select>
+
+    <!-- 展开某顶层评论的全部子评论（升序） -->
+    <select id="findChildrenByRoot" resultType="top.huyuhao.anime.pojo.Comment">
+        select <include refid="commentUserColumns"/>
+        from comment c
+        inner join user u on c.user_id = u.id
+        left join user rt on c.reply_to_user_id = rt.id
+        where c.parent_id = #{parentId}
+        order by c.created_at asc
+    </select>
+
+    <!-- 批量查询当前用户对一批评论的点赞状态 -->
+    <select id="findLikesByCommentIds" resultType="top.huyuhao.anime.pojo.CommentLike">
+        select * from comment_like
+        where user_id = #{userId} and comment_id in
+        <foreach collection="commentIds" item="cid" open="(" separator="," close=")">#{cid}</foreach>
+    </select>
+
+</mapper>

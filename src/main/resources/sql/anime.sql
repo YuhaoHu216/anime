@@ -146,3 +146,40 @@ CREATE TABLE episode (
   KEY idx_anime (anime_id),
   CONSTRAINT fk_episode_anime FOREIGN KEY (anime_id) REFERENCES anime(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='剧集信息表';
+
+-- ---------------------------------------------------
+-- Step 9: 创建 comment 动漫评论表（2026-08-26新增，要同步到服务器执行以下 CREATE TABLE）
+-- ---------------------------------------------------
+CREATE TABLE comment (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  anime_id INT NOT NULL,
+  user_id INT NOT NULL,
+  parent_id INT DEFAULT NULL COMMENT '子评论的 parent_id 指向所属顶层评论（仅一层子评论）',
+  reply_to_user_id INT DEFAULT NULL COMMENT '回复对象用户ID（子评论 @昵称 用）',
+  content VARCHAR(2000) DEFAULT NULL COMMENT '文字内容（图片评论可留空）',
+  images TEXT COMMENT '图片相对路径 JSON 数组，如 ["comments/1_ab12.png"]',
+  like_count INT DEFAULT 0 COMMENT '点赞数',
+  dislike_count INT DEFAULT 0 COMMENT '点踩数',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_anime_created (anime_id, created_at),
+  INDEX idx_parent (parent_id),
+  FOREIGN KEY (anime_id) REFERENCES anime(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES user(id),
+  FOREIGN KEY (parent_id) REFERENCES comment(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='动漫评论表';
+
+-- ---------------------------------------------------
+-- Step 10: 创建 comment_like 评论点赞表（2026-08-26新增，要同步到服务器执行以下 CREATE TABLE）
+-- ---------------------------------------------------
+CREATE TABLE comment_like (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  comment_id INT NOT NULL,
+  user_id INT NOT NULL,
+  type TINYINT NOT NULL DEFAULT 1 COMMENT '1=赞 -1=踩',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_comment_user (comment_id, user_id),
+  INDEX idx_user (user_id),
+  FOREIGN KEY (comment_id) REFERENCES comment(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES user(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='评论点赞表';

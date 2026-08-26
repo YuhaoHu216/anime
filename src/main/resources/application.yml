@@ -51,6 +51,7 @@ app:
   upload:
     cover-dir: covers
     avatar-dir: avatars
+    comment-dir: comments
 
 # Bangumi API 代理（翻墙访问 api.bgm.tv）
 bangumi:

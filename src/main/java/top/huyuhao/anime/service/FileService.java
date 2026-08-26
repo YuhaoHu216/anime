@@ -19,4 +19,12 @@ public interface FileService {
      * @return 头像相对路径，如 avatars/123_abc.png
      */
     String uploadAvatar(MultipartFile file, Integer userId);
+
+    /**
+     * 上传评论图片
+     * @param file 图片文件
+     * @param userId 用户ID（用于命名）
+     * @return 评论图片相对路径，如 comments/123_abc.png
+     */
+    String uploadComment(MultipartFile file, Integer userId);
 }

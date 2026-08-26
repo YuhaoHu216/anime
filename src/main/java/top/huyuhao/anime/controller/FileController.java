@@ -49,6 +49,16 @@ public class FileController {
         return Result.success("上传成功", fileService.uploadAvatar(file, userId));
     }
 
+    @PostMapping("/upload-comment")
+    @Operation(summary = "上传评论图片", description = "登录后上传评论图片，返回相对路径 comments/xxx.png")
+    public Result uploadComment(@Parameter(description = "图片文件") @RequestParam("file") MultipartFile file) {
+        Integer userId = UserContext.getUserId();
+        if (userId == null) {
+            throw new RuntimeException("未登录");
+        }
+        return Result.success("上传成功", fileService.uploadComment(file, userId));
+    }
+
     @GetMapping("/{*path}")
     @Operation(summary = "获取文件", description = "根据路径获取上传的文件")
     public ResponseEntity<Resource> getFile(@Parameter(description = "文件相对路径") @PathVariable String path) {
