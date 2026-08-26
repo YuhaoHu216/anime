@@ -99,6 +99,13 @@ public interface WatchLogMapper {
             "where user_id = #{userId} order by watch_date desc")
     List<LocalDate> getDistinctWatchDates(@Param("userId") Integer userId);
 
+    /** 用户所有每日集数（最早至今，用于最长连续追番段统计） */
+    @Select("select date_format(watch_date, '%Y-%m-%d') as `date`, sum(ep_count) as `count` " +
+            "from watch_log " +
+            "where user_id = #{userId} " +
+            "group by watch_date order by watch_date")
+    List<java.util.Map<String, Object>> getAllDailyStats(@Param("userId") Integer userId);
+
     /** 每日集数统计（热力图数据源） */
     @Select("select date_format(watch_date, '%Y-%m-%d') as `date`, sum(ep_count) as `count` " +
             "from watch_log " +

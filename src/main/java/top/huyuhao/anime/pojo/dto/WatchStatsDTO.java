@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -25,6 +26,18 @@ public class WatchStatsDTO {
 
     /** 连续追番天数 */
     private Integer streakDays;
+
+    /** 最长连续追番天数 */
+    private Integer longestStreakDays;
+
+    /** 最长连续段的起始日期 */
+    private LocalDate longestStreakStart;
+
+    /** 最长连续段的结束日期 */
+    private LocalDate longestStreakEnd;
+
+    /** 最长连续段内观看总集数 */
+    private Integer longestStreakEpisodes;
 
     /** 每日集数统计（热力图数据源） */
     private List<DailyStats> dailyStats;

@@ -90,9 +90,16 @@ public class WatchLogServiceImpl implements WatchLogService {
         LocalDate monthStart = now.withDayOfMonth(1);
         dto.setMonthEpisodes(watchLogMapper.sumMonthEpisodes(userId, monthStart, now));
 
-        // 连续天数
-        List<LocalDate> distinctDates = watchLogMapper.getDistinctWatchDates(userId);
-        dto.setStreakDays(calcStreakDays(distinctDates, now));
+        // 所有每日集数（最早至今）：用于当前连续天数 + 最长连续追番段
+        java.util.TreeMap<LocalDate, Integer> dayCountMap = new java.util.TreeMap<>();
+        List<java.util.Map<String, Object>> rawAllDaily = watchLogMapper.getAllDailyStats(userId);
+        if (rawAllDaily != null) {
+            for (java.util.Map<String, Object> row : rawAllDaily) {
+                dayCountMap.put(LocalDate.parse((String) row.get("date")), ((Number) row.get("count")).intValue());
+            }
+        }
+        dto.setStreakDays(calcStreakDays(dayCountMap.keySet(), now));
+        computeLongestStreak(dayCountMap, dto);
 
         // 每日集数（热力图）
         List<Map<String, Object>> rawDaily = watchLogMapper.getDailyStats(userId, dailyStartDate, dailyEndDate);
@@ -167,10 +174,48 @@ public class WatchLogServiceImpl implements WatchLogService {
     }
 
     /**
+     * 计算最长连续追番段：天数 + 起止日期 + 段内观看总集数。
+     * 遍历升序每日集数，找最长的连续日期段；天数相同时保留更早开始的一段。
+     */
+    private void computeLongestStreak(java.util.TreeMap<LocalDate, Integer> dayCountMap, WatchStatsDTO dto) {
+        if (dayCountMap == null || dayCountMap.isEmpty()) return;
+        int bestDays = 0, bestEpisodes = 0;
+        LocalDate bestStart = null, bestEnd = null;
+        int curDays = 0, curEpisodes = 0;
+        LocalDate curStart = null;
+        LocalDate prev = null;
+        for (java.util.Map.Entry<LocalDate, Integer> entry : dayCountMap.entrySet()) {
+            LocalDate d = entry.getKey();
+            int count = entry.getValue();
+            if (curStart != null && prev != null && d.equals(prev.plusDays(1))) {
+                // 连续：延续当前段
+                curDays++;
+                curEpisodes += count;
+            } else {
+                // 断开：重新开始一段
+                curStart = d;
+                curDays = 1;
+                curEpisodes = count;
+            }
+            prev = d;
+            if (curDays > bestDays) {
+                bestDays = curDays;
+                bestStart = curStart;
+                bestEnd = d;
+                bestEpisodes = curEpisodes;
+            }
+        }
+        dto.setLongestStreakDays(bestDays);
+        dto.setLongestStreakStart(bestStart);
+        dto.setLongestStreakEnd(bestEnd);
+        dto.setLongestStreakEpisodes(bestEpisodes);
+    }
+
+    /**
      * 计算连续追番天数：从今天开始向前数，遇到中断即停止。
      * 如果今天没有记录，则从昨天开始算。
      */
-    private int calcStreakDays(List<LocalDate> distinctDates, LocalDate today) {
+    private int calcStreakDays(java.util.Collection<LocalDate> distinctDates, LocalDate today) {
         if (distinctDates == null || distinctDates.isEmpty()) return 0;
         java.util.Set<LocalDate> dateSet = new java.util.HashSet<>(distinctDates);
         int streak = 0;
