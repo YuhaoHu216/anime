@@ -35,6 +35,11 @@ public interface WatchLogService {
     List<WatchLog> getRecentLogs(Integer userId, Integer limit);
 
     /**
+     * 获取有追番记录的年份列表（降序），供热力图年份下拉框使用
+     */
+    List<Integer> getWatchYears(Integer userId);
+
+    /**
      * 获取某动漫的追番进度（数字正片进度 + 已看集号明细，含番外）
      */
     WatchProgressDTO getProgress(Integer userId, Integer animeId);

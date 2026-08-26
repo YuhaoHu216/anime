@@ -77,6 +77,7 @@ public class ShareServiceImpl implements ShareService {
             if (endDate == null) endDate = LocalDate.now();
             dto.setStats(watchLogService.getStats(userId, startDate, endDate));
             dto.setRecentLogs(watchLogService.getRecentLogs(userId, 5));
+            dto.setAvailableYears(watchLogService.getWatchYears(userId));
         }
 
         return dto;

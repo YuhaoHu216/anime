@@ -116,6 +116,17 @@ public class WatchLogServiceImpl implements WatchLogService {
     }
 
     @Override
+    public List<Integer> getWatchYears(Integer userId) {
+        List<LocalDate> dates = watchLogMapper.getDistinctWatchDates(userId);
+        if (dates == null || dates.isEmpty()) return new java.util.ArrayList<>();
+        return dates.stream()
+                .map(LocalDate::getYear)
+                .distinct()
+                .sorted(java.util.Comparator.reverseOrder())
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
     public WatchProgressDTO getProgress(Integer userId, Integer animeId) {
         Integer maxEpEnd = watchLogMapper.getMaxEpEnd(userId, animeId);
         List<String> watchedEpNos = new java.util.ArrayList<>();

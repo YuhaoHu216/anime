@@ -24,6 +24,9 @@ public class ShareProfileDTO {
     /** 最近追番记录（watchPublic=true 时返回） */
     private List<WatchLog> recentLogs;
 
+    /** 有追番记录的年份列表（降序，watchPublic=true 时返回），供热力图年份下拉框使用 */
+    private List<Integer> availableYears;
+
     /** 三个隐私开关，供前端判断各模块是否渲染 */
     private PrivacyUpdateDTO privacy;
 }
